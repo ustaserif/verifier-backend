@@ -43,8 +43,11 @@ paths:
       operationId: Sign in
       tags:
         - Verifier
-      parameters:
-        - $ref: '#/components/parameters/network'
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInRequest'
       responses:
         '200':
           description: All services are running
@@ -65,11 +68,11 @@ paths:
           - $ref: '#/components/parameters/sessionID'
       responses:
         '200':
-          description: All services are running
+          description: Get response status
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UUID'
+                $ref: '#/components/schemas/StatusResponse'
         '404':
           $ref: '#/components/responses/404'
         '500':
@@ -141,12 +144,6 @@ paths:
 
 components:
   schemas:
-    Health:
-      type: object
-      x-omitempty: false
-      example:
-        healthy: true
-
     CallbackRequest:
       type: object
 
@@ -193,7 +190,7 @@ components:
 
     StatusResponse:
       type: object
-      example: '|
+      example: '
       {
    "authResponse":{
       "id":"0e3f5aa0-6d7a-4199-a40d-861541140c1f",
@@ -454,6 +451,12 @@ components:
    ]
 }'
 
+    Health:
+      type: object
+      x-omitempty: false
+      example:
+        healthy: true
+
     SingInResponse:
       type: object
       required:
@@ -468,38 +471,99 @@ components:
     QRCode:
       type: object
       required:
-        - circuitId
-        - requestId
+          - id
+          - typ
+          - type
+          - thid
+          - body
+          - from
       properties:
+        id:
+          type: string
+          example: '6dc645a6-2be3-4099-a645-20784ee53cd0'
+        typ:
+          type: string
+          example: 'application/iden3comm-plain-json'
+        type:
+          type: string
+          example: 'https://iden3-communication.io/authorization/1.0/request'
+        thid:
+          type: string
+          example: '6dc645a6-2be3-4099-a645-20784ee53cd0'
+        body:
+          type: object
+          properties:
+            callbackUrl:
+              type: string
+              example: 'https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=469345'
+            reason:
+              type: string
+              example: 'test flow'
+            scope:
+              type: array
+              items:
+                $ref: '#/components/schemas/Scope'
+        from:
+            type: string
+            example: 'did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT'
+
+    Scope:
+      type: object
+      required:
+        - id
+        - circuitId
+        - query
+      properties:
+        id:
+          type: integer
+          example: 1
         circuitId:
           type: string
           example: 'credentialAtomicQuerySigV2'
-        requestId:
+        query:
+          type: object
+
+    SignInRequest:
+      type: object
+      required:
+        - circuitID
+        - requestID
+        - query
+      properties:
+        circuitID:
+          type: string
+          example: 'credentialAtomicQuerySigV2'
+        requestID:
           type: integer
           example: 1
         to:
           type: string
+          example: 'did:xxxx'
         query:
           type: object
-          properties:
-            type:
-              type: string
-              example: 'DIDAuth'
-            allowedIssuers:
-              type: array
-              items:
-                type: string
-                example: '*'
-            context:
-              type: string
-              example: 'ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc'
-            credentialSubject:
-              type: object
-              example: '{
-                "position":{
-                  "$eq":1
-                }
-              }'
+        onChain:
+          $ref: '#/components/schemas/OnChain'
+
+    OnChain:
+      type: object
+      required:
+          - network
+          - contractAddress
+          - chainID
+          - methodIDs
+      properties:
+          network:
+            type: string
+            example: 'mumbai'
+          contractAddress:
+            type: string
+            example: '0x000000'
+          methodID:
+            type: string
+            example: 'whatever'
+          chainID:
+            type: integer
+            example: 80001
 
 
     UUID:
@@ -521,18 +585,6 @@ components:
 
 
   parameters:
-    network:
-      name: network
-      in: query
-      required: true
-      description: |
-          Network e.g: mumbai | main
-      schema:
-        type: string
-        enum:
-          - mumbai
-          - main
-
     sessionID:
       name: sessionID
       in: query
@@ -547,11 +599,11 @@ components:
           path: github.com/google/uuid
 
     id:
-      name: sessionID
+      name: id
       in: query
       required: true
       description: |
-        Session ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
+        ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
       schema:
         type: string
         x-go-type: uuid.UUID
@@ -562,13 +614,6 @@ components:
   responses:
     '400':
       description: 'Bad Request'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GenericErrorMessage'
-
-    '401':
-      description: 'Unauthorized'
       content:
         application/json:
           schema:

@@ -3,15 +3,15 @@ ARG VERSION
 WORKDIR /service
 ENV GOBIN /service/bin
 COPY ./api ./api
-COPY ./cmd ./cmd\
+COPY ./cmd ./cmd
 COPY ./internal ./internal
 COPY ./keys ./keys
 
 COPY ./go.mod ./
 COPY ./go.sum ./
 
-RUN go install -buildvcs=false -ldflags "-X main.build=${VERSION}" ./cmd/...
-
+#RUN go install -buildvcs=false -ldflags "-X main.build=${VERSION}" ./cmd/...
+RUN go build -ldflags "-X main.build=${VERSION}" -o bin/verifier ./cmd/main.go
 
 FROM alpine:latest
 RUN apk add --no-cache libstdc++ gcompat libgomp
@@ -26,3 +26,5 @@ RUN chmod g+rx,o+rx /
 COPY --from=base ./service/api ./api
 COPY --from=base ./service/bin/* ./
 COPY --from=base ./service/keys ./keys
+
+ENTRYPOINT ["./verifier"]

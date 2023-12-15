@@ -16,6 +16,8 @@ build/docker: ## Build the docker image.
 		-t 0xpolygon/verifier-backend:$(VERSION) \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		.
+	docker tag 0xpolygon/verifier-backend:$(VERSION) 0xpolygon/verifier-backend:latest
 
 
 ## install code generator for API files.
@@ -37,3 +39,17 @@ api: $(BIN)/oapi-codegen
 .PHONY: lint
 lint: $(BIN)/golangci-lint
 	  $(BIN)/golangci-lint run
+
+.PHONY: run
+run: build/docker
+	docker run --env-file ./.env -p 3009:3009 -d --name verifier-backend 0xpolygon/verifier-backend:latest
+
+
+.PHONY: stop
+stop:
+	docker stop verifier-backend || true
+
+.PHONY: restart
+restart: stop
+	docker rm verifier-backend || true
+	make run

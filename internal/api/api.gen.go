@@ -15,18 +15,6 @@ import (
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
-// Defines values for Network.
-const (
-	NetworkMain   Network = "main"
-	NetworkMumbai Network = "mumbai"
-)
-
-// Defines values for SignInParamsNetwork.
-const (
-	SignInParamsNetworkMain   SignInParamsNetwork = "main"
-	SignInParamsNetworkMumbai SignInParamsNetwork = "mumbai"
-)
-
 // CallbackRequest defines model for CallbackRequest.
 type CallbackRequest = map[string]interface{}
 
@@ -41,17 +29,26 @@ type GenericErrorMessage struct {
 // Health defines model for Health.
 type Health = map[string]interface{}
 
+// OnChain defines model for OnChain.
+type OnChain struct {
+	ChainID         int     `json:"chainID"`
+	ContractAddress string  `json:"contractAddress"`
+	MethodID        *string `json:"methodID,omitempty"`
+	Network         string  `json:"network"`
+}
+
 // QRCode defines model for QRCode.
 type QRCode struct {
-	CircuitId string `json:"circuitId"`
-	Query     *struct {
-		AllowedIssuers    *[]string               `json:"allowedIssuers,omitempty"`
-		Context           *string                 `json:"context,omitempty"`
-		CredentialSubject *map[string]interface{} `json:"credentialSubject,omitempty"`
-		Type              *string                 `json:"type,omitempty"`
-	} `json:"query,omitempty"`
-	RequestId int     `json:"requestId"`
-	To        *string `json:"to,omitempty"`
+	Body struct {
+		CallbackUrl *string  `json:"callbackUrl,omitempty"`
+		Reason      *string  `json:"reason,omitempty"`
+		Scope       *[]Scope `json:"scope,omitempty"`
+	} `json:"body"`
+	From string `json:"from"`
+	Id   string `json:"id"`
+	Thid string `json:"thid"`
+	Typ  string `json:"typ"`
+	Type string `json:"type"`
 }
 
 // QRStoreRequest defines model for QRStoreRequest.
@@ -60,20 +57,36 @@ type QRStoreRequest = map[string]interface{}
 // QRStoreResponse defines model for QRStoreResponse.
 type QRStoreResponse = string
 
+// Scope defines model for Scope.
+type Scope struct {
+	CircuitId string                 `json:"circuitId"`
+	Id        int                    `json:"id"`
+	Query     map[string]interface{} `json:"query"`
+}
+
+// SignInRequest defines model for SignInRequest.
+type SignInRequest struct {
+	CircuitID string                 `json:"circuitID"`
+	OnChain   *OnChain               `json:"onChain,omitempty"`
+	Query     map[string]interface{} `json:"query"`
+	RequestID int                    `json:"requestID"`
+	To        *string                `json:"to,omitempty"`
+}
+
 // SingInResponse defines model for SingInResponse.
 type SingInResponse struct {
 	QrCode    QRCode `json:"qrCode"`
 	SessionID UUID   `json:"sessionID"`
 }
 
+// StatusResponse defines model for StatusResponse.
+type StatusResponse = map[string]interface{}
+
 // UUID defines model for UUID.
 type UUID = uuid.UUID
 
 // Id defines model for id.
 type Id = uuid.UUID
-
-// Network defines model for network.
-type Network string
 
 // SessionID defines model for sessionID.
 type SessionID = uuid.UUID
@@ -92,18 +105,9 @@ type CallbackParams struct {
 
 // GetQRCodeFromStoreParams defines parameters for GetQRCodeFromStore.
 type GetQRCodeFromStoreParams struct {
-	// SessionID Session ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
-	SessionID Id `form:"sessionID" json:"sessionID"`
+	// Id ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
+	Id Id `form:"id" json:"id"`
 }
-
-// SignInParams defines parameters for SignIn.
-type SignInParams struct {
-	// Network Network e.g: mumbai | main
-	Network SignInParamsNetwork `form:"network" json:"network"`
-}
-
-// SignInParamsNetwork defines parameters for SignIn.
-type SignInParamsNetwork string
 
 // StatusParams defines parameters for Status.
 type StatusParams struct {
@@ -116,6 +120,9 @@ type CallbackJSONRequestBody = CallbackRequest
 
 // QRStoreJSONRequestBody defines body for QRStore for application/json ContentType.
 type QRStoreJSONRequestBody = QRStoreRequest
+
+// SignInJSONRequestBody defines body for SignIn for application/json ContentType.
+type SignInJSONRequestBody = SignInRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -136,7 +143,7 @@ type ServerInterface interface {
 	QRStore(w http.ResponseWriter, r *http.Request)
 	// Sing in
 	// (GET /sign-in)
-	SignIn(w http.ResponseWriter, r *http.Request, params SignInParams)
+	SignIn(w http.ResponseWriter, r *http.Request)
 	// Get Status
 	// (GET /status)
 	Status(w http.ResponseWriter, r *http.Request, params StatusParams)
@@ -178,7 +185,7 @@ func (_ Unimplemented) QRStore(w http.ResponseWriter, r *http.Request) {
 
 // Sing in
 // (GET /sign-in)
-func (_ Unimplemented) SignIn(w http.ResponseWriter, r *http.Request, params SignInParams) {
+func (_ Unimplemented) SignIn(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -271,18 +278,18 @@ func (siw *ServerInterfaceWrapper) GetQRCodeFromStore(w http.ResponseWriter, r *
 	// Parameter object where we will unmarshal all parameters from the context
 	var params GetQRCodeFromStoreParams
 
-	// ------------- Required query parameter "sessionID" -------------
+	// ------------- Required query parameter "id" -------------
 
-	if paramValue := r.URL.Query().Get("sessionID"); paramValue != "" {
+	if paramValue := r.URL.Query().Get("id"); paramValue != "" {
 
 	} else {
-		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "sessionID"})
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "id"})
 		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, true, "sessionID", r.URL.Query(), &params.SessionID)
+	err = runtime.BindQueryParameter("form", true, true, "id", r.URL.Query(), &params.Id)
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "sessionID", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
 		return
 	}
 
@@ -316,28 +323,8 @@ func (siw *ServerInterfaceWrapper) QRStore(w http.ResponseWriter, r *http.Reques
 func (siw *ServerInterfaceWrapper) SignIn(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	var err error
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params SignInParams
-
-	// ------------- Required query parameter "network" -------------
-
-	if paramValue := r.URL.Query().Get("network"); paramValue != "" {
-
-	} else {
-		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "network"})
-		return
-	}
-
-	err = runtime.BindQueryParameter("form", true, true, "network", r.URL.Query(), &params.Network)
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "network", Err: err})
-		return
-	}
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.SignIn(w, r, params)
+		siw.Handler.SignIn(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -662,7 +649,7 @@ func (response QRStore500JSONResponse) VisitQRStoreResponse(w http.ResponseWrite
 }
 
 type SignInRequestObject struct {
-	Params SignInParams
+	Body *SignInJSONRequestBody
 }
 
 type SignInResponseObject interface {
@@ -695,7 +682,7 @@ type StatusResponseObject interface {
 	VisitStatusResponse(w http.ResponseWriter) error
 }
 
-type Status200JSONResponse UUID
+type Status200JSONResponse StatusResponse
 
 func (response Status200JSONResponse) VisitStatusResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -915,10 +902,15 @@ func (sh *strictHandler) QRStore(w http.ResponseWriter, r *http.Request) {
 }
 
 // SignIn operation middleware
-func (sh *strictHandler) SignIn(w http.ResponseWriter, r *http.Request, params SignInParams) {
+func (sh *strictHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	var request SignInRequestObject
 
-	request.Params = params
+	var body SignInJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.SignIn(ctx, request.(SignInRequestObject))
