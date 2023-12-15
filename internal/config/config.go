@@ -4,6 +4,7 @@ import "github.com/kelseyhightower/envconfig"
 
 // Config holds the project configuration
 type Config struct {
+	Host    string `envconfig:"host" default:"http://localhost"`
 	ApiPort string `envconfig:"port" default:"3009"`
 	KeyDIR  string `envconfig:"keydir" default:"./keys"`
 }
