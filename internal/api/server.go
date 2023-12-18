@@ -2,22 +2,39 @@ package api
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	auth "github.com/iden3/go-iden3-auth/v2"
 	"github.com/iden3/go-iden3-auth/v2/loaders"
+	"github.com/iden3/go-iden3-auth/v2/pubsignals"
+	"github.com/iden3/go-iden3-auth/v2/state"
+	"github.com/iden3/iden3comm/v2/protocol"
+	"github.com/patrickmn/go-cache"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/0xPolygonID/verifier-backend/internal/config"
+	"github.com/0xPolygonID/verifier-backend/internal/loader"
 )
 
 // Server represents the API server
 type Server struct {
 	keyLoader *loaders.FSKeyLoader
+	cfg       config.Config
+	cache     *cache.Cache
 }
 
 // New creates a new API server
-func New(keyLoader *loaders.FSKeyLoader) *Server {
+func New(cfg config.Config, keyLoader *loaders.FSKeyLoader) *Server {
 	return &Server{
+		cfg:       cfg,
 		keyLoader: keyLoader,
+		cache:     cache.New(60*time.Minute, 60*time.Minute),
 	}
 }
 
@@ -41,7 +58,45 @@ func (s *Server) GetDocumentation(_ context.Context, _ GetDocumentationRequestOb
 
 // Callback - handle callback endpoint
 func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (CallbackResponseObject, error) {
-	return nil, nil
+	sessionID := request.Params.SessionID
+
+	log.WithFields(log.Fields{
+		"sessionID": sessionID,
+		"token":     request.Body,
+	}).Info("callback")
+
+	authRequest, b := s.cache.Get(sessionID)
+	if !b {
+		log.WithFields(log.Fields{
+			"sessionID": sessionID,
+		}).Error("sessionID not found")
+		return nil, fmt.Errorf("sessionID not found")
+	}
+
+	w3cLoader := loader.NewW3CDocumentLoader(nil, s.cfg.IPFSURL)
+
+	resolvers := s.parseResolverSettings()
+	verifier, err := auth.NewVerifier(s.keyLoader, resolvers, auth.WithDocumentLoader(w3cLoader))
+	if err != nil {
+		log.WithFields(log.Fields{
+			"sessionID": sessionID,
+			"err":       err,
+		}).Error("failed to create verifier")
+		return nil, err
+	}
+
+	_, err = verifier.FullVerify(ctx, *request.Body,
+		authRequest.(protocol.AuthorizationRequestMessage),
+		pubsignals.WithAcceptedStateTransitionDelay(time.Minute*5))
+	if err != nil {
+		log.WithFields(log.Fields{
+			"sessionID": sessionID,
+			"err":       err,
+		}).Error("failed to verify")
+		return nil, err
+	}
+
+	return Callback200JSONResponse{}, nil
 }
 
 // GetQRCodeFromStore - get QR code from store
@@ -56,7 +111,79 @@ func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRS
 
 // SignIn - sign in
 func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignInResponseObject, error) {
-	return nil, nil
+	rURL := s.cfg.Host
+	sessionID := rand.Intn(1000000)
+	uri := fmt.Sprintf("%s%s?sessionID=%s", rURL, config.CallbackURL, strconv.Itoa(sessionID))
+
+	var senderDID string
+	if request.Body.Network == "mumbai" {
+		senderDID = s.cfg.MumbaiSenderDID
+	} else {
+		senderDID = s.cfg.MainSenderDID
+	}
+
+	authorizationRequest := auth.CreateAuthorizationRequest("test flow", senderDID, uri)
+
+	// TODO - Ask when could be false
+	isLocal := true
+	if isLocal {
+		authorizationRequest.ID = "7f38a193-0918-4a48-9fac-36adfdb8b542"
+		authorizationRequest.ThreadID = "7f38a193-0918-4a48-9fac-36adfdb8b542"
+	}
+
+	//var customQuery models.CustomQuery
+	mtpProofRequest := protocol.ZeroKnowledgeProofRequest{
+		ID:        uint32(1),
+		CircuitID: request.Body.CircuitID,
+		Query:     request.Body.Query,
+	}
+
+	authorizationRequest.To = ""
+	if request.Body.To != nil {
+		authorizationRequest.To = *request.Body.To
+	}
+
+	authorizationRequest.Body.Scope = append(authorizationRequest.Body.Scope, mtpProofRequest)
+	s.cache.Set(strconv.Itoa(sessionID), authorizationRequest, cache.DefaultExpiration)
+
+	response := SignIn200JSONResponse{
+		QrCode:    getQRCode(authorizationRequest),
+		SessionID: sessionID,
+	}
+
+	return response, nil
+}
+
+func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
+	scopes := make([]Scope, len(request.Body.Scope))
+	for i, scope := range request.Body.Scope {
+		scopes[i] = Scope{
+			CircuitId: scope.CircuitID,
+			Id:        int(scope.ID),
+			Query:     scope.Query,
+		}
+	}
+
+	var body = struct {
+		CallbackUrl *string  `json:"callbackUrl,omitempty"`
+		Reason      *string  `json:"reason,omitempty"`
+		Scope       *[]Scope `json:"scope,omitempty"`
+	}{
+		CallbackUrl: &request.Body.CallbackURL,
+		Reason:      &request.Body.Reason,
+		Scope:       &scopes,
+	}
+
+	qrCode := QRCode{
+		From: request.From,
+		Id:   request.ID,
+		Thid: request.ThreadID,
+		Typ:  string(request.Typ),
+		Type: string(request.Type),
+		Body: body,
+	}
+
+	return qrCode
 }
 
 // Status - status
@@ -85,4 +212,17 @@ func writeFile(path string, mimeType string, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", mimeType)
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(f)
+}
+
+// parseResolverSettings parses the resolver settings from the config file
+func (s *Server) parseResolverSettings() map[string]pubsignals.StateResolver {
+	resolvers := map[string]pubsignals.StateResolver{}
+	for chainName, chainSettings := range s.cfg.ResolverSettings {
+		for networkName, networkSettings := range chainSettings {
+			prefix := fmt.Sprintf("%s:%s", chainName, networkName)
+			resolver := state.NewETHResolver(networkSettings.NetworkURL, networkSettings.ContractAddress)
+			resolvers[prefix] = resolver
+		}
+	}
+	return resolvers
 }

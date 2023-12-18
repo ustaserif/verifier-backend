@@ -126,10 +126,12 @@ paths:
       parameters:
         - $ref: '#/components/parameters/sessionID'
       requestBody:
-          content:
-            application/json:
-                schema:
-                  $ref: '#/components/schemas/CallbackRequest'
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: jwz-token
       responses:
         '200':
           description: Callback
@@ -144,9 +146,6 @@ paths:
 
 components:
   schemas:
-    CallbackRequest:
-      type: object
-
     CallbackResponse:
       type: object
 
@@ -464,7 +463,7 @@ components:
           - qrCode
       properties:
           sessionID:
-            $ref: '#/components/schemas/UUID'
+            type: integer
           qrCode:
             $ref: '#/components/schemas/QRCode'
 
@@ -526,10 +525,14 @@ components:
     SignInRequest:
       type: object
       required:
+        - network
         - circuitID
         - requestID
         - query
       properties:
+        network:
+          type: string
+          example: 'mumbai'
         circuitID:
           type: string
           example: 'credentialAtomicQuerySigV2'
@@ -590,13 +593,10 @@ components:
       in: query
       required: true
       description: |
-        Session ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
+        Session ID e.g: 123456
       schema:
         type: string
-        x-go-type: uuid.UUID
-        x-go-type-import:
-          name: uuid
-          path: github.com/google/uuid
+
 
     id:
       name: id

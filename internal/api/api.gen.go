@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -14,9 +15,6 @@ import (
 	"github.com/oapi-codegen/runtime"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
-
-// CallbackRequest defines model for CallbackRequest.
-type CallbackRequest = map[string]interface{}
 
 // CallbackResponse defines model for CallbackResponse.
 type CallbackResponse = map[string]interface{}
@@ -67,6 +65,7 @@ type Scope struct {
 // SignInRequest defines model for SignInRequest.
 type SignInRequest struct {
 	CircuitID string                 `json:"circuitID"`
+	Network   string                 `json:"network"`
 	OnChain   *OnChain               `json:"onChain,omitempty"`
 	Query     map[string]interface{} `json:"query"`
 	RequestID int                    `json:"requestID"`
@@ -76,20 +75,17 @@ type SignInRequest struct {
 // SingInResponse defines model for SingInResponse.
 type SingInResponse struct {
 	QrCode    QRCode `json:"qrCode"`
-	SessionID UUID   `json:"sessionID"`
+	SessionID int    `json:"sessionID"`
 }
 
 // StatusResponse defines model for StatusResponse.
 type StatusResponse = map[string]interface{}
 
-// UUID defines model for UUID.
-type UUID = uuid.UUID
-
 // Id defines model for id.
 type Id = uuid.UUID
 
 // SessionID defines model for sessionID.
-type SessionID = uuid.UUID
+type SessionID = string
 
 // N404 defines model for 404.
 type N404 = GenericErrorMessage
@@ -97,9 +93,12 @@ type N404 = GenericErrorMessage
 // N500 defines model for 500.
 type N500 = GenericErrorMessage
 
+// CallbackTextBody defines parameters for Callback.
+type CallbackTextBody = string
+
 // CallbackParams defines parameters for Callback.
 type CallbackParams struct {
-	// SessionID Session ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
+	// SessionID Session ID e.g: 123456
 	SessionID SessionID `form:"sessionID" json:"sessionID"`
 }
 
@@ -111,12 +110,12 @@ type GetQRCodeFromStoreParams struct {
 
 // StatusParams defines parameters for Status.
 type StatusParams struct {
-	// SessionID Session ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
+	// SessionID Session ID e.g: 123456
 	SessionID SessionID `form:"sessionID" json:"sessionID"`
 }
 
-// CallbackJSONRequestBody defines body for Callback for application/json ContentType.
-type CallbackJSONRequestBody = CallbackRequest
+// CallbackTextRequestBody defines body for Callback for text/plain ContentType.
+type CallbackTextRequestBody = CallbackTextBody
 
 // QRStoreJSONRequestBody defines body for QRStore for application/json ContentType.
 type QRStoreJSONRequestBody = QRStoreRequest
@@ -528,7 +527,7 @@ func (response GetDocumentation200Response) VisitGetDocumentationResponse(w http
 
 type CallbackRequestObject struct {
 	Params CallbackParams
-	Body   *CallbackJSONRequestBody
+	Body   *CallbackTextRequestBody
 }
 
 type CallbackResponseObject interface {
@@ -793,11 +792,12 @@ func (sh *strictHandler) Callback(w http.ResponseWriter, r *http.Request, params
 
 	request.Params = params
 
-	var body CallbackJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+	data, err := io.ReadAll(r.Body)
+	if err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't read body: %w", err))
 		return
 	}
+	body := CallbackTextRequestBody(data)
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {

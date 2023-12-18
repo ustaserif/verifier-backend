@@ -26,7 +26,7 @@ func main() {
 	keysLoader := &loaders.FSKeyLoader{Dir: cfg.KeyDIR}
 
 	mux := chi.NewRouter()
-	apiServer := api.New(keysLoader)
+	apiServer := api.New(*cfg, keysLoader)
 	api.HandlerFromMux(api.NewStrictHandlerWithOptions(apiServer, nil,
 		api.StrictHTTPServerOptions{RequestErrorHandlerFunc: errors.RequestErrorHandlerFunc}), mux)
 	api.RegisterStatic(mux)
