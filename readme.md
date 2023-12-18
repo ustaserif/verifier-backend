@@ -1,5 +1,6 @@
 # Verifier Backend
 
+[![golangci-lint](https://github.com/0xPolygonID/verifier-backend/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/0xPolygonID/verifier-backend/actions/workflows/golangci-lint.yml)
 
 ### Requirements:
 1. Create a file named `.env` in the root directory of the project. .env-example is provided as an example.
