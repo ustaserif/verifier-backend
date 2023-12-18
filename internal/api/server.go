@@ -192,6 +192,7 @@ func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignI
 		authorizationRequest.ThreadID = "7f38a193-0918-4a48-9fac-36adfdb8b542"
 	}
 
+	// TODO: Why ID is 1. Ask
 	mtpProofRequest := protocol.ZeroKnowledgeProofRequest{
 		ID:        uint32(1),
 		CircuitID: request.Body.CircuitID,
