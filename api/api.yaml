@@ -532,7 +532,7 @@ components:
       required:
         - network
         - circuitID
-        - requestID
+#        - requestID
         - query
       properties:
         network:
@@ -541,9 +541,9 @@ components:
         circuitID:
           type: string
           example: 'credentialAtomicQuerySigV2'
-        requestID:
-          type: integer
-          example: 1
+#        requestID:
+#          type: integer
+#          example: 1
         to:
           type: string
           example: 'did:xxxx'

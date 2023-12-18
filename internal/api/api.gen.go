@@ -69,7 +69,6 @@ type SignInRequest struct {
 	Network   string                 `json:"network"`
 	OnChain   *OnChain               `json:"onChain,omitempty"`
 	Query     map[string]interface{} `json:"query"`
-	RequestID int                    `json:"requestID"`
 	To        *string                `json:"to,omitempty"`
 }
 
