@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -92,7 +93,7 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, err
 	}
 
-	_, err = verifier.FullVerify(ctx, *request.Body,
+	arm, err := verifier.FullVerify(ctx, *request.Body,
 		authRequest.(protocol.AuthorizationRequestMessage),
 		pubsignals.WithAcceptedStateTransitionDelay(stateTransitionDelay))
 	if err != nil {
@@ -102,6 +103,14 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		}).Error("failed to verify")
 		return nil, err
 	}
+
+	m := make(map[string]interface{})
+
+	m["id"] = arm.From
+	m["authResponse"] = arm
+	m["proofs"] = arm.Body.Scope
+
+	s.cache.Set(sessionID, m, cache.DefaultExpiration)
 
 	return Callback200JSONResponse{}, nil
 }
@@ -247,6 +256,49 @@ func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
 
 // Status - status
 func (s *Server) Status(ctx context.Context, request StatusRequestObject) (StatusResponseObject, error) {
+	id := request.Params.SessionID
+	item, ok := s.cache.Get(id)
+	if !ok {
+		log.WithFields(log.Fields{
+			"sessionID": id,
+		}).Error("sessionID not found")
+		return Status404JSONResponse{
+			N404JSONResponse: N404JSONResponse{
+				Message: "sessionID not found",
+			},
+		}, nil
+	}
+
+	switch item.(type) {
+	case protocol.AuthorizationRequestMessage:
+		return Status404JSONResponse{
+			N404JSONResponse: N404JSONResponse{
+				Message: "no authorization response yet",
+			},
+		}, nil
+	case map[string]interface{}:
+		b, err := json.Marshal(item)
+		if err != nil {
+			log.Println(err.Error())
+			return Status500JSONResponse{
+				N500JSONResponse: N500JSONResponse{
+					Message: "failed to marshal response",
+				},
+			}, nil
+		}
+		//nolint // -
+		m := make(map[string]interface{})
+		err = json.Unmarshal(b, &m)
+		if err != nil {
+			log.Println(err.Error())
+			return Status500JSONResponse{
+				N500JSONResponse: N500JSONResponse{
+					Message: "failed to unmarshal response",
+				},
+			}, nil
+		}
+		return Status200JSONResponse(m), nil
+	}
 	return nil, nil
 }
 
