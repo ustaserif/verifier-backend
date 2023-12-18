@@ -1,15 +1,13 @@
 package api
 
 import (
-	"context"
-	"net/http"
+	"encoding/json"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/iden3/go-iden3-auth/v2/loaders"
+	"github.com/stretchr/testify/require"
 
 	"github.com/0xPolygonID/verifier-backend/internal/config"
-	"github.com/0xPolygonID/verifier-backend/internal/errors"
 )
 
 var (
@@ -18,7 +16,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-
 	cfg = config.Config{
 		Host:            "http://localhost",
 		ApiPort:         "3000",
@@ -40,14 +37,8 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func getHandler(ctx context.Context, server *Server) http.Handler {
-	mux := chi.NewRouter()
-	RegisterStatic(mux)
-	return HandlerFromMux(NewStrictHandlerWithOptions(
-		server,
-		nil,
-		StrictHTTPServerOptions{
-			RequestErrorHandlerFunc: errors.RequestErrorHandlerFunc,
-		},
-	), mux)
+func jsonToMap(t *testing.T, jsonStr string) map[string]interface{} {
+	result := make(map[string]interface{})
+	require.NoError(t, json.Unmarshal([]byte(jsonStr), &result))
+	return result
 }

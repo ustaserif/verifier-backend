@@ -6,8 +6,6 @@ export PATH := $(BIN):$(PATH)
 
 BUILD_CMD := $(GO) install -ldflags "-X main.build=${VERSION}"
 
-
-
 .PHONY: build/docker
 build/docker: ## Build the docker image.
 	DOCKER_BUILDKIT=1 \
@@ -29,6 +27,10 @@ $(BIN)/oapi-codegen: tools.go go.mod go.sum
 $(BIN)/golangci-lint: go.mod go.sum
 	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint
 
+
+.PHONY: tests
+tests:
+	$(GO) test -v ./...
 
 ## Generate API files
 .PHONY: api

@@ -359,5 +359,41 @@ func checkRequest(request SignInRequestObject) (SignInResponseObject, error) {
 		}}, nil
 	}
 
+	query := request.Body.Query
+	if query == nil {
+		log.Error("query is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "query is nil",
+		}}, nil
+	}
+
+	if query["context"] == nil || query["context"] == "" {
+		log.Error("context is empty")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "context is empty",
+		}}, nil
+	}
+
+	if query["type"] == nil || query["type"] == "" {
+		log.Error("type is empty")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "type is empty",
+		}}, nil
+	}
+
+	if query["allowedIssuers"] == nil {
+		log.Error("allowedIssuers is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "allowedIssuers is empty",
+		}}, nil
+	}
+
+	if query["credentialSubject"] == nil {
+		log.Error("credentialSubject is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "credentialSubject is empty",
+		}}, nil
+	}
+
 	return nil, nil
 }
