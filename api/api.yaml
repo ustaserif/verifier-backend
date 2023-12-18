@@ -55,6 +55,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingInResponse'
+        '400':
+          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
 
@@ -154,7 +156,7 @@ components:
       example: iden3comm://?request_uri=https%3A%2F%2Fissuer-demo.polygonid.me%2Fapi%2Fqr-store%3Fid%3Df780a169-8959-4380-9461-f7200e2ed3f4
 
     QRStoreRequest:
-      type: object
+      $ref: '#/components/schemas/QRCode'
       example: ' {
        "id":"6dc645a6-2be3-4099-a645-20784ee53cd0",
        "typ":"application/iden3comm-plain-json",
@@ -505,6 +507,9 @@ components:
         from:
             type: string
             example: 'did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT'
+        to:
+          type: string
+          example: 'did:polygon:mumbai:2qJ689kpoJxcSzB5sAFJtPsSBSrHF5dq722BHMqURL'
 
     Scope:
       type: object
@@ -544,6 +549,20 @@ components:
           example: 'did:xxxx'
         query:
           type: object
+          example: '
+          {
+             "type":"KYCAgeCredential",
+             "context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.jsonld",
+             "credentialSubject":{
+                "birthday":{
+                   "$lt":20000101
+                }
+             },
+             "skipClaimRevocationCheck":true,
+             "allowedIssuers":[
+                "*"
+             ]
+          }'
         onChain:
           $ref: '#/components/schemas/OnChain'
 

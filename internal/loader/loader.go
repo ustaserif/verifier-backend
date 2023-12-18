@@ -8,6 +8,7 @@ import (
 	"github.com/piprate/json-gold/ld"
 )
 
+// W3CDocumentLoader is a document loader that loads w3c context
 type W3CDocumentLoader struct {
 	l ld.DocumentLoader
 }
@@ -19,9 +20,8 @@ func NewW3CDocumentLoader(ipfsCli *shell.Shell, ipfsGW string) ld.DocumentLoader
 	}
 }
 
-func (d *W3CDocumentLoader) LoadDocument(
-	u string) (doc *ld.RemoteDocument, err error) {
-
+// LoadDocument loads a document
+func (d *W3CDocumentLoader) LoadDocument(u string) (doc *ld.RemoteDocument, err error) {
 	if u == W3CCredential2018ContextURL {
 		w3cDoc, errIn := ld.DocumentFromReader(strings.NewReader(W3CCredential2018ContextDocument))
 		if errIn != nil {

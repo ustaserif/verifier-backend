@@ -42,15 +42,16 @@ type QRCode struct {
 		Reason      *string  `json:"reason,omitempty"`
 		Scope       *[]Scope `json:"scope,omitempty"`
 	} `json:"body"`
-	From string `json:"from"`
-	Id   string `json:"id"`
-	Thid string `json:"thid"`
-	Typ  string `json:"typ"`
-	Type string `json:"type"`
+	From string  `json:"from"`
+	Id   string  `json:"id"`
+	Thid string  `json:"thid"`
+	To   *string `json:"to,omitempty"`
+	Typ  string  `json:"typ"`
+	Type string  `json:"type"`
 }
 
 // QRStoreRequest defines model for QRStoreRequest.
-type QRStoreRequest = map[string]interface{}
+type QRStoreRequest = QRCode
 
 // QRStoreResponse defines model for QRStoreResponse.
 type QRStoreResponse = string
@@ -86,6 +87,9 @@ type Id = uuid.UUID
 
 // SessionID defines model for sessionID.
 type SessionID = string
+
+// N400 defines model for 400.
+type N400 = GenericErrorMessage
 
 // N404 defines model for 404.
 type N404 = GenericErrorMessage
@@ -506,6 +510,8 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	return r
 }
 
+type N400JSONResponse GenericErrorMessage
+
 type N404JSONResponse GenericErrorMessage
 
 type N500JSONResponse GenericErrorMessage
@@ -660,6 +666,15 @@ type SignIn200JSONResponse SingInResponse
 func (response SignIn200JSONResponse) VisitSignInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type SignIn400JSONResponse struct{ N400JSONResponse }
+
+func (response SignIn400JSONResponse) VisitSignInResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }

@@ -10,6 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// CallbackURL is the callback endpoint
 const CallbackURL string = "/callback"
 
 // Config holds the project configuration

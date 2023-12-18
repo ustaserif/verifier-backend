@@ -8,6 +8,8 @@ import (
 	"syscall"
 
 	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	log "github.com/sirupsen/logrus"
 
@@ -26,6 +28,14 @@ func main() {
 	keysLoader := &loaders.FSKeyLoader{Dir: cfg.KeyDIR}
 
 	mux := chi.NewRouter()
+
+	mux.Use(
+		chiMiddleware.RequestID,
+		chiMiddleware.Recoverer,
+		cors.Handler(cors.Options{AllowedOrigins: []string{"*"}}),
+		chiMiddleware.NoCache,
+	)
+
 	apiServer := api.New(*cfg, keysLoader)
 	api.HandlerFromMux(api.NewStrictHandlerWithOptions(apiServer, nil,
 		api.StrictHTTPServerOptions{RequestErrorHandlerFunc: errors.RequestErrorHandlerFunc}), mux)

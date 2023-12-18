@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gofrs/uuid/v5"
 	auth "github.com/iden3/go-iden3-auth/v2"
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	"github.com/iden3/go-iden3-auth/v2/pubsignals"
@@ -20,6 +21,12 @@ import (
 
 	"github.com/0xPolygonID/verifier-backend/internal/config"
 	"github.com/0xPolygonID/verifier-backend/internal/loader"
+)
+
+const (
+	ttl                  = 60 * time.Minute
+	randomSeed           = 1000000
+	stateTransitionDelay = time.Minute * 5
 )
 
 // Server represents the API server
@@ -34,7 +41,7 @@ func New(cfg config.Config, keyLoader *loaders.FSKeyLoader) *Server {
 	return &Server{
 		cfg:       cfg,
 		keyLoader: keyLoader,
-		cache:     cache.New(60*time.Minute, 60*time.Minute),
+		cache:     cache.New(ttl, ttl),
 	}
 }
 
@@ -87,7 +94,7 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 
 	_, err = verifier.FullVerify(ctx, *request.Body,
 		authRequest.(protocol.AuthorizationRequestMessage),
-		pubsignals.WithAcceptedStateTransitionDelay(time.Minute*5))
+		pubsignals.WithAcceptedStateTransitionDelay(stateTransitionDelay))
 	if err != nil {
 		log.WithFields(log.Fields{
 			"sessionID": sessionID,
@@ -101,18 +108,63 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 
 // GetQRCodeFromStore - get QR code from store
 func (s *Server) GetQRCodeFromStore(ctx context.Context, request GetQRCodeFromStoreRequestObject) (GetQRCodeFromStoreResponseObject, error) {
-	return nil, nil
+	sessionID := request.Params.Id
+	data, ok := s.cache.Get(sessionID.String())
+	if !ok {
+		log.Println("sessionID not found")
+		return GetQRCodeFromStore500JSONResponse{
+			N500JSONResponse: N500JSONResponse{
+				Message: "sessionID not found",
+			},
+		}, nil
+	}
+
+	response, ok := data.(*QRCode)
+	if !ok {
+		log.Println("failed to cast data to QRCode")
+		return GetQRCodeFromStore500JSONResponse{
+			N500JSONResponse: N500JSONResponse{
+				Message: "failed to cast data to QRCode",
+			},
+		}, nil
+	}
+	return GetQRCodeFromStore200JSONResponse(*response), nil
 }
 
 // QRStore - store QR code
 func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error) {
-	return nil, nil
+	// generate random key
+	uv, err := uuid.NewV4()
+	if err != nil {
+		return QRStore500JSONResponse{
+			N500JSONResponse: N500JSONResponse{
+				Message: "Failed to generate uuid",
+			},
+		}, nil
+	}
+
+	// store data in map
+	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
+	hostURL := s.cfg.Host
+	// write key to response
+	shortURL := fmt.Sprintf("%s%s?id=%s", hostURL, "/qr-store", uv.String())
+	return QRStore200JSONResponse(shortURL), nil
 }
 
 // SignIn - sign in
 func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignInResponseObject, error) {
 	rURL := s.cfg.Host
-	sessionID := rand.Intn(1000000)
+
+	check, err := checkRequest(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if check != nil {
+		return check, nil
+	}
+
+	sessionID := rand.Intn(randomSeed)
 	uri := fmt.Sprintf("%s%s?sessionID=%s", rURL, config.CallbackURL, strconv.Itoa(sessionID))
 
 	var senderDID string
@@ -131,7 +183,6 @@ func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignI
 		authorizationRequest.ThreadID = "7f38a193-0918-4a48-9fac-36adfdb8b542"
 	}
 
-	//var customQuery models.CustomQuery
 	mtpProofRequest := protocol.ZeroKnowledgeProofRequest{
 		ID:        uint32(1),
 		CircuitID: request.Body.CircuitID,
@@ -164,11 +215,13 @@ func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
 		}
 	}
 
-	var body = struct {
+	type bodyType struct {
 		CallbackUrl *string  `json:"callbackUrl,omitempty"`
 		Reason      *string  `json:"reason,omitempty"`
 		Scope       *[]Scope `json:"scope,omitempty"`
-	}{
+	}
+
+	body := bodyType{
 		CallbackUrl: &request.Body.CallbackURL,
 		Reason:      &request.Body.Reason,
 		Scope:       &scopes,
@@ -181,6 +234,12 @@ func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
 		Typ:  string(request.Typ),
 		Type: string(request.Type),
 		Body: body,
+	}
+
+	if request.To == "" {
+		qrCode.To = nil
+	} else {
+		qrCode.To = &request.To
 	}
 
 	return qrCode
@@ -225,4 +284,27 @@ func (s *Server) parseResolverSettings() map[string]pubsignals.StateResolver {
 		}
 	}
 	return resolvers
+}
+
+func checkRequest(request SignInRequestObject) (SignInResponseObject, error) {
+	if request.Body.Network != "mumbai" && request.Body.Network != "main" {
+		log.WithFields(log.Fields{
+			"network": request.Body.Network,
+		}).Error("invalid network")
+
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "invalid network",
+		}}, nil
+	}
+
+	if request.Body.CircuitID != "credentialAtomicQuerySigV2" && request.Body.CircuitID != "credentialAtomicQueryMTPV2" {
+		log.WithFields(log.Fields{
+			"circuitID": request.Body.CircuitID,
+		}).Error("invalid circuitID")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "invalid circuitID, just credentialAtomicQuerySigV2 and credentialAtomicQueryMTPV2 are supported",
+		}}, nil
+	}
+
+	return nil, nil
 }

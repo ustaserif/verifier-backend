@@ -9,6 +9,7 @@ COPY ./keys ./keys
 
 COPY ./go.mod ./
 COPY ./go.sum ./
+COPY ./resolvers_settings.yaml ./resolvers_settings.yaml
 
 #RUN go install -buildvcs=false -ldflags "-X main.build=${VERSION}" ./cmd/...
 RUN go build -ldflags "-X main.build=${VERSION}" -o bin/verifier ./cmd/main.go
@@ -26,5 +27,8 @@ RUN chmod g+rx,o+rx /
 COPY --from=base ./service/api ./api
 COPY --from=base ./service/bin/* ./
 COPY --from=base ./service/keys ./keys
+COPY --from=base ./service/resolvers_settings.yaml ./resolvers_settings.yaml
 
+
+EXPOSE 3010
 ENTRYPOINT ["./verifier"]

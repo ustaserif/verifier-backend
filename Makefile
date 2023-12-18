@@ -42,7 +42,7 @@ lint: $(BIN)/golangci-lint
 
 .PHONY: run
 run: build/docker
-	docker run --env-file ./.env -p 3009:3009 -d --name verifier-backend 0xpolygon/verifier-backend:latest
+	docker run --env-file ./.env -p 3010:3010 -d --name verifier-backend 0xpolygon/verifier-backend:latest
 
 
 .PHONY: stop
