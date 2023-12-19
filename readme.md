@@ -1,5 +1,5 @@
 # Verifier Backend
-
+[![Checks](https://github.com/0xPolygonID/verifier-backend/actions/workflows/checks.yml/badge.svg)](https://github.com/0xPolygonID/verifier-backend/actions/workflows/checks.yml)
 [![golangci-lint](https://github.com/0xPolygonID/verifier-backend/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/0xPolygonID/verifier-backend/actions/workflows/golangci-lint.yml)
 
 ### Requirements:
