@@ -142,7 +142,6 @@ func (s *Server) GetQRCodeFromStore(ctx context.Context, request GetQRCodeFromSt
 
 // QRStore - store QR code
 func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error) {
-	// generate random key
 	uv, err := uuid.NewV4()
 	if err != nil {
 		return QRStore500JSONResponse{
@@ -152,10 +151,8 @@ func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRS
 		}, nil
 	}
 
-	// store data in map
 	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
 	hostURL := s.cfg.Host
-	// write key to response
 	shortURL := fmt.Sprintf("%s%s?id=%s", hostURL, "/qr-store", uv.String())
 	return QRStore200JSONResponse(shortURL), nil
 }

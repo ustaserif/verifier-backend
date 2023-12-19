@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -365,6 +366,89 @@ func TestSignIn(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestQRStore(t *testing.T) {
+	ctx := context.Background()
+	server := New(cfg, keysLoader)
+
+	type bodyType struct {
+		CallbackUrl *string  `json:"callbackUrl,omitempty"`
+		Reason      *string  `json:"reason,omitempty"`
+		Scope       *[]Scope `json:"scope,omitempty"`
+	}
+
+	type expected struct {
+		httpCode int
+		QRStoreResponseObject
+	}
+
+	type testConfig struct {
+		name     string
+		body     QRStoreRequestObject
+		expected expected
+	}
+
+	for _, tc := range []testConfig{
+		{
+			name: "valid request",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "",
+					To:   common.ToPointer(""),
+					Typ:  "",
+					Type: "",
+					Body: bodyType{
+						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
+						Reason:      common.ToPointer("reason"),
+						Scope: &[]Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusOK,
+			},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			rr, err := server.QRStore(ctx, tc.body)
+			require.NoError(t, err)
+			switch tc.expected.httpCode {
+			case http.StatusOK:
+				response, ok := rr.(QRStore200JSONResponse)
+				require.True(t, ok)
+				assert.True(t, isValidaQrStoreCallback(t, string(response)))
+			default:
+				t.Errorf("unexpected http code: %d", tc.expected.httpCode)
+			}
+		})
+	}
+}
+
+func isValidaQrStoreCallback(t *testing.T, url string) bool {
+	callBackURL := url
+	items := strings.Split(callBackURL, "?")
+	if len(items) != 2 {
+		return false
+	}
+	if items[0] != cfg.Host+"/qr-store" {
+		return false
+	}
+
+	queryItems := strings.Split(items[1], "=")
+	if len(queryItems) != 2 {
+		return false
+	}
+
+	_, err := uuid.FromString(queryItems[1])
+	require.NoError(t, err)
+	return true
 }
 
 func isValidCallBack(t *testing.T, url *string) bool {
