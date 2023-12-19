@@ -142,7 +142,6 @@ func (s *Server) GetQRCodeFromStore(ctx context.Context, request GetQRCodeFromSt
 
 // QRStore - store QR code
 func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error) {
-	// generate random key
 	uv, err := uuid.NewV4()
 	if err != nil {
 		return QRStore500JSONResponse{
@@ -152,10 +151,8 @@ func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRS
 		}, nil
 	}
 
-	// store data in map
 	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
 	hostURL := s.cfg.Host
-	// write key to response
 	shortURL := fmt.Sprintf("%s%s?id=%s", hostURL, "/qr-store", uv.String())
 	return QRStore200JSONResponse(shortURL), nil
 }
@@ -192,6 +189,7 @@ func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignI
 		authorizationRequest.ThreadID = "7f38a193-0918-4a48-9fac-36adfdb8b542"
 	}
 
+	// TODO: Why ID is 1. Ask
 	mtpProofRequest := protocol.ZeroKnowledgeProofRequest{
 		ID:        uint32(1),
 		CircuitID: request.Body.CircuitID,
@@ -355,6 +353,42 @@ func checkRequest(request SignInRequestObject) (SignInResponseObject, error) {
 		}).Error("invalid circuitID")
 		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
 			Message: "invalid circuitID, just credentialAtomicQuerySigV2 and credentialAtomicQueryMTPV2 are supported",
+		}}, nil
+	}
+
+	query := request.Body.Query
+	if query == nil {
+		log.Error("query is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "query is nil",
+		}}, nil
+	}
+
+	if query["context"] == nil || query["context"] == "" {
+		log.Error("context is empty")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "context is empty",
+		}}, nil
+	}
+
+	if query["type"] == nil || query["type"] == "" {
+		log.Error("type is empty")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "type is empty",
+		}}, nil
+	}
+
+	if query["allowedIssuers"] == nil {
+		log.Error("allowedIssuers is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "allowedIssuers is empty",
+		}}, nil
+	}
+
+	if query["credentialSubject"] == nil {
+		log.Error("credentialSubject is nil")
+		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
+			Message: "credentialSubject is empty",
 		}}, nil
 	}
 
