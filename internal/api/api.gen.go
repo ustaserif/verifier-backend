@@ -56,20 +56,23 @@ type QRStoreRequest = QRCode
 // QRStoreResponse defines model for QRStoreResponse.
 type QRStoreResponse = string
 
+// Query defines model for Query.
+type Query = map[string]interface{}
+
 // Scope defines model for Scope.
 type Scope struct {
-	CircuitId string                 `json:"circuitId"`
-	Id        int                    `json:"id"`
-	Query     map[string]interface{} `json:"query"`
+	CircuitId string `json:"circuitId"`
+	Id        int    `json:"id"`
+	Query     Query  `json:"query"`
 }
 
 // SignInRequest defines model for SignInRequest.
 type SignInRequest struct {
-	CircuitID string                 `json:"circuitID"`
-	Network   string                 `json:"network"`
-	OnChain   *OnChain               `json:"onChain,omitempty"`
-	Query     map[string]interface{} `json:"query"`
-	To        *string                `json:"to,omitempty"`
+	CircuitID string   `json:"circuitID"`
+	Network   string   `json:"network"`
+	OnChain   *OnChain `json:"onChain,omitempty"`
+	Query     Query    `json:"query"`
+	To        *string  `json:"to,omitempty"`
 }
 
 // SingInResponse defines model for SingInResponse.
@@ -143,7 +146,7 @@ type ServerInterface interface {
 	// Store QRCode
 	// (POST /qr-store)
 	QRStore(w http.ResponseWriter, r *http.Request)
-	// Sing in
+	// Sign in
 	// (GET /sign-in)
 	SignIn(w http.ResponseWriter, r *http.Request)
 	// Get Status
@@ -185,7 +188,7 @@ func (_ Unimplemented) QRStore(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Sing in
+// Sign in
 // (GET /sign-in)
 func (_ Unimplemented) SignIn(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
@@ -739,7 +742,7 @@ type StrictServerInterface interface {
 	// Store QRCode
 	// (POST /qr-store)
 	QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error)
-	// Sing in
+	// Sign in
 	// (GET /sign-in)
 	SignIn(ctx context.Context, request SignInRequestObject) (SignInResponseObject, error)
 	// Get Status
