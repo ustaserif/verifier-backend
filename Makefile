@@ -15,7 +15,6 @@ build/docker: ## Build the docker image.
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		.
-	docker tag 0xpolygon/verifier-backend:$(VERSION) 0xpolygon/verifier-backend:latest
 
 
 ## install code generator for API files.
