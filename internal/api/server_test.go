@@ -40,7 +40,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQuerySigV2 circuit with KYCAgeCredential",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -88,7 +88,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQuerySigV2 circuit with KYCAgeCredential and to field",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -137,7 +137,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryMTPV2 circuit with KYCAgeCredential",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQueryMTPV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -182,17 +182,17 @@ func TestSignIn(t *testing.T) {
 			},
 		},
 		{
-			name: "invalid request - invalid network",
+			name: "invalid request - invalid ChainID",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network: "invalid",
+					ChainID: "invalid",
 				},
 			},
 			expected: expected{
 				httpCode: http.StatusBadRequest,
 				SignInResponseObject: SignIn400JSONResponse{
 					N400JSONResponse{
-						Message: "invalid network",
+						Message: "invalid Chain ID - must be 80001 or 137",
 					},
 				},
 			},
@@ -201,7 +201,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid circuitID",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "invalid",
 				},
 			},
@@ -218,7 +218,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no context",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						
@@ -238,7 +238,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - context empty",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": ""
@@ -258,7 +258,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld"
@@ -278,7 +278,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - empty type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -299,7 +299,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no allowedIssuers",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -320,7 +320,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no credentialSubject",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					Network:   "mumbai",
+					ChainID:   "80001",
 					CircuitID: "credentialAtomicQuerySigV2",
 					Query: jsonToMap(t, `{
 						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",

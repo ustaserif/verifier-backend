@@ -174,7 +174,7 @@ func (s *Server) SignIn(ctx context.Context, request SignInRequestObject) (SignI
 	uri := fmt.Sprintf("%s%s?sessionID=%s", rURL, config.CallbackURL, strconv.Itoa(sessionID))
 
 	var senderDID string
-	if request.Body.Network == "mumbai" {
+	if request.Body.ChainID == "80001" {
 		senderDID = s.cfg.MumbaiSenderDID
 	} else {
 		senderDID = s.cfg.MainSenderDID
@@ -337,13 +337,13 @@ func (s *Server) parseResolverSettings() map[string]pubsignals.StateResolver {
 }
 
 func checkRequest(request SignInRequestObject) (SignInResponseObject, error) {
-	if request.Body.Network != "mumbai" && request.Body.Network != "main" {
+	if request.Body.ChainID != "80001" && request.Body.ChainID != "137" {
 		log.WithFields(log.Fields{
-			"network": request.Body.Network,
-		}).Error("invalid network")
+			"network": request.Body.ChainID,
+		}).Error("invalid Chain ID - must be 80001 or 137")
 
 		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
-			Message: "invalid network",
+			Message: "invalid Chain ID - must be 80001 or 137",
 		}}, nil
 	}
 

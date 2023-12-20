@@ -551,49 +551,22 @@ components:
     SignInRequest:
       type: object
       required:
-        - network
+        - chainID
         - circuitID
 #        - requestID
         - query
       properties:
-        network:
+        chainID:
           type: string
-          example: 'mumbai'
+          example: '137'
         circuitID:
           type: string
           example: 'credentialAtomicQuerySigV2'
-#        requestID:
-#          type: integer
-#          example: 1
         to:
           type: string
           example: 'did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci'
         query:
           $ref : '#/components/schemas/Query'
-        onChain:
-          $ref: '#/components/schemas/OnChain'
-
-    OnChain:
-      type: object
-      required:
-          - network
-          - contractAddress
-          - chainID
-          - methodIDs
-      properties:
-          network:
-            type: string
-            example: 'mumbai'
-          contractAddress:
-            type: string
-            example: '0x000000'
-          methodID:
-            type: string
-            example: 'whatever'
-          chainID:
-            type: integer
-            example: 80001
-
 
     UUID:
       type: string

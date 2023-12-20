@@ -27,14 +27,6 @@ type GenericErrorMessage struct {
 // Health defines model for Health.
 type Health = map[string]interface{}
 
-// OnChain defines model for OnChain.
-type OnChain struct {
-	ChainID         int     `json:"chainID"`
-	ContractAddress string  `json:"contractAddress"`
-	MethodID        *string `json:"methodID,omitempty"`
-	Network         string  `json:"network"`
-}
-
 // QRCode defines model for QRCode.
 type QRCode struct {
 	Body struct {
@@ -68,11 +60,10 @@ type Scope struct {
 
 // SignInRequest defines model for SignInRequest.
 type SignInRequest struct {
-	CircuitID string   `json:"circuitID"`
-	Network   string   `json:"network"`
-	OnChain   *OnChain `json:"onChain,omitempty"`
-	Query     Query    `json:"query"`
-	To        *string  `json:"to,omitempty"`
+	ChainID   string  `json:"chainID"`
+	CircuitID string  `json:"circuitID"`
+	Query     Query   `json:"query"`
+	To        *string `json:"to,omitempty"`
 }
 
 // SingInResponse defines model for SingInResponse.
