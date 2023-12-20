@@ -11,7 +11,7 @@ build/docker: ## Build the docker image.
 	DOCKER_BUILDKIT=1 \
 	docker build \
 		-f ./Dockerfile \
-		-t 0xpolygon/verifier-backend:$(VERSION) \
+		-t polygonid/verifier-backend:$(VERSION) \
 		--build-arg VERSION=$(VERSION) \
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		.
@@ -43,7 +43,7 @@ lint: $(BIN)/golangci-lint
 
 .PHONY: run
 run: build/docker
-	docker run --env-file ./.env -p 3010:3010 -d --name verifier-backend 0xpolygon/verifier-backend:latest
+	docker run --env-file ./.env -p 3010:3010 -d --name verifier-backend polygonid/verifier-backend:$(VERSION)
 
 
 .PHONY: stop
