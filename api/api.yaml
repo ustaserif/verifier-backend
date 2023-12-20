@@ -7,7 +7,7 @@ info:
 
 servers:
   - description: Local
-    url: http://localhost:3009
+    url: http://localhost:3010
 
 tags:
   - name: Verifier
@@ -39,7 +39,7 @@ paths:
 
   /sign-in:
     get:
-      summary: Sing in
+      summary: Sign in
       operationId: Sign in
       tags:
         - Verifier
@@ -50,7 +50,7 @@ paths:
                 $ref: '#/components/schemas/SignInRequest'
       responses:
         '200':
-          description: All services are running
+          description: Authorization Request created
           content:
             application/json:
               schema:
@@ -134,6 +134,7 @@ paths:
             schema:
               type: string
               example: jwz-token
+              description: JWZ token
       responses:
         '200':
           description: Callback
@@ -163,7 +164,7 @@ components:
        "type":"https://iden3-communication.io/authorization/1.0/request",
        "thid":"6dc645a6-2be3-4099-a645-20784ee53cd0",
        "body":{
-          "callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=469345",
+          "callbackUrl":"https://verifier-backend/callback?sessionId=469345",
           "reason":"test flow",
           "scope":[
              {
@@ -466,6 +467,7 @@ components:
       properties:
           sessionID:
             type: integer
+            example: 121342345
           qrCode:
             $ref: '#/components/schemas/QRCode'
 
@@ -496,7 +498,7 @@ components:
           properties:
             callbackUrl:
               type: string
-              example: 'https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=469345'
+              example: 'https://verifier-backend/callback?sessionId=469345'
             reason:
               type: string
               example: 'test flow'
@@ -509,7 +511,7 @@ components:
             example: 'did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT'
         to:
           type: string
-          example: 'did:polygon:mumbai:2qJ689kpoJxcSzB5sAFJtPsSBSrHF5dq722BHMqURL'
+          example: 'did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci'
 
     Scope:
       type: object
@@ -525,7 +527,26 @@ components:
           type: string
           example: 'credentialAtomicQuerySigV2'
         query:
-          type: object
+          $ref: '#/components/schemas/Query'
+
+    Query:
+      type: object
+      example:
+        '{
+           "network": "mumbai",
+           "circuitID": "credentialAtomicQuerySigV2",
+           "skipClaimRevocationCheck": false, 
+           "query": {
+             "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+             "allowedIssuers": ["*"],
+             "type": "KYCAgeCredential",
+             "credentialSubject": {
+                 "birthday": {
+                     "$eq": 19960424
+                 }
+             }
+           }
+         }'
 
     SignInRequest:
       type: object
@@ -546,23 +567,9 @@ components:
 #          example: 1
         to:
           type: string
-          example: 'did:xxxx'
+          example: 'did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci'
         query:
-          type: object
-          example: '
-          {
-             "type":"KYCAgeCredential",
-             "context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.jsonld",
-             "credentialSubject":{
-                "birthday":{
-                   "$lt":20000101
-                }
-             },
-             "skipClaimRevocationCheck":true,
-             "allowedIssuers":[
-                "*"
-             ]
-          }'
+          $ref : '#/components/schemas/Query'
         onChain:
           $ref: '#/components/schemas/OnChain'
 
