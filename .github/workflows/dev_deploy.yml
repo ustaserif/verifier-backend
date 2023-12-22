@@ -47,10 +47,10 @@ jobs:
           echo -e "  mumbai:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.POLYGON_MUMBAI_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_NODE_URL }}" >> resolvers_settings.yaml
-          echo -e "  main:" >> resolvers.settings.yaml
+          echo -e "  main:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.POLYGON_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_MAINET_NODE_URL }}" >> resolvers_settings.yaml
-
+          cat resolvers_settings.yaml
       - run: make build/docker
 
       - name: Configure AWS credentials
