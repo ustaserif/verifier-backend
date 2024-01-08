@@ -3,12 +3,12 @@ name: Deploy verifier backend to Testing AWS Environment
 on:
   workflow_run:
     workflows: ["Checks"]
-    branches:  ["testing"]
+    branches:  ["main"]
     types:
       - completed
 
 env:
-  AWS_ACCOUNT_ID: ${{ secrets.TESTING_AWS_ACCOUNT_ID }}
+  AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_ID }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
   ENVIRONMENT: testing
   ECR_REPOSITORY: verifier_backend
