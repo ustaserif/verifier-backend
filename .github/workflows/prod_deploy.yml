@@ -1,4 +1,4 @@
-name: Deploy verifier backend to Testing AWS Environment
+name: Deploy verifier backend to Production AWS Environment
 
 on:
   workflow_run:
@@ -10,7 +10,7 @@ on:
 env:
   AWS_ACCOUNT_ID: ${{ secrets.PROD_AWS_ACCOUNT_ID }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-  ENVIRONMENT: testing
+  ENVIRONMENT: production
   ECR_REPOSITORY: verifier_backend
   POLYGON_MUMBAI_CONTRACT_ADDRESS: "0x134B1BE34911E39A8397ec6289782989729807a4"
   POLYGON_MAIN_CONTRACT_ADDRESS: "0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D"
