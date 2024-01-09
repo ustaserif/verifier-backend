@@ -16,3 +16,57 @@ make restart  # stop and remove the container, build the image and run the conta
 
 
 
+#### /sign-in body example:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQuerySigV2",
+  "skipClaimRevocationCheck": false, 
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+        "birthday": {
+            "$eq": 19960424
+        }
+    }
+  }
+}
+```
+
+#### /sign-in payload response sample:
+
+```json
+{
+    "qrCode": {
+        "body": {
+            "callbackUrl": "https://my-verifier-host/verifier/callback?sessionID=63622",
+            "reason": "test flow",
+            "scope": [
+                {
+                    "circuitId": "credentialAtomicQuerySigV2",
+                    "id": 1,
+                    "query": {
+                        "allowedIssuers": ["*"],
+                        "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+                        "credentialSubject": {
+                            "birthday": {
+                                "$eq": 19960424
+                            }
+                        },
+                        "type": "KYCAgeCredential"
+                    }
+                }
+            ]
+        },
+        "from": "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+        "id": "7f38a193-0918-4a48-9fac-36adfdb8b542",
+        "thid": "7f38a193-0918-4a48-9fac-36adfdb8b542",
+        "typ": "application/iden3comm-plain-json",
+        "type": "https://iden3-communication.io/authorization/1.0/request"
+    },
+    "sessionID": 63622
+}
+```
