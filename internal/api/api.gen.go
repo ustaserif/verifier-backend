@@ -73,7 +73,9 @@ type SingInResponse struct {
 }
 
 // StatusResponse defines model for StatusResponse.
-type StatusResponse = map[string]interface{}
+type StatusResponse struct {
+	Jwz string `json:"jwz"`
+}
 
 // Id defines model for id.
 type Id = uuid.UUID

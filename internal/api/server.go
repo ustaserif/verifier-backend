@@ -93,7 +93,7 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, err
 	}
 
-	arm, err := verifier.FullVerify(ctx, *request.Body,
+	_, err = verifier.FullVerify(ctx, *request.Body,
 		authRequest.(protocol.AuthorizationRequestMessage),
 		pubsignals.WithAcceptedStateTransitionDelay(stateTransitionDelay))
 	if err != nil {
@@ -104,13 +104,7 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, err
 	}
 
-	m := make(map[string]interface{})
-
-	m["id"] = arm.From
-	m["authResponse"] = arm
-	m["proofs"] = arm.Body.Scope
-
-	s.cache.Set(sessionID, m, cache.DefaultExpiration)
+	s.cache.Set(sessionID, *request.Body, cache.DefaultExpiration)
 
 	return Callback200JSONResponse{}, nil
 }
@@ -274,7 +268,7 @@ func (s *Server) Status(ctx context.Context, request StatusRequestObject) (Statu
 				Message: "no authorization response yet",
 			},
 		}, nil
-	case map[string]interface{}:
+	case string:
 		b, err := json.Marshal(item)
 		if err != nil {
 			log.Println(err.Error())
@@ -285,7 +279,7 @@ func (s *Server) Status(ctx context.Context, request StatusRequestObject) (Statu
 			}, nil
 		}
 		//nolint // -
-		m := make(map[string]interface{})
+		var m string
 		err = json.Unmarshal(b, &m)
 		if err != nil {
 			log.Println(err.Error())
@@ -295,7 +289,9 @@ func (s *Server) Status(ctx context.Context, request StatusRequestObject) (Statu
 				},
 			}, nil
 		}
-		return Status200JSONResponse(m), nil
+		return Status200JSONResponse{
+			Jwz: m,
+		}, nil
 	}
 	return nil, nil
 }
