@@ -138,7 +138,7 @@ type ServerInterface interface {
 	// (POST /qr-store)
 	QRStore(w http.ResponseWriter, r *http.Request)
 	// Sign in
-	// (GET /sign-in)
+	// (POST /sign-in)
 	SignIn(w http.ResponseWriter, r *http.Request)
 	// Get Status
 	// (GET /status)
@@ -180,7 +180,7 @@ func (_ Unimplemented) QRStore(w http.ResponseWriter, r *http.Request) {
 }
 
 // Sign in
-// (GET /sign-in)
+// (POST /sign-in)
 func (_ Unimplemented) SignIn(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
@@ -494,7 +494,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/qr-store", wrapper.QRStore)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/sign-in", wrapper.SignIn)
+		r.Post(options.BaseURL+"/sign-in", wrapper.SignIn)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/status", wrapper.Status)
@@ -734,7 +734,7 @@ type StrictServerInterface interface {
 	// (POST /qr-store)
 	QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error)
 	// Sign in
-	// (GET /sign-in)
+	// (POST /sign-in)
 	SignIn(ctx context.Context, request SignInRequestObject) (SignInResponseObject, error)
 	// Get Status
 	// (GET /status)
