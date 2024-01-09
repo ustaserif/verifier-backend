@@ -153,7 +153,7 @@ func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRS
 
 	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
 	hostURL := s.cfg.Host
-	shortURL := fmt.Sprintf("%s%s?id=%s", hostURL, "/qr-store", uv.String())
+	shortURL := fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", hostURL, "/qr-store", uv.String())
 	return QRStore200JSONResponse(shortURL), nil
 }
 
