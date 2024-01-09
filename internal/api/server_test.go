@@ -433,11 +433,11 @@ func TestQRStore(t *testing.T) {
 
 func isValidaQrStoreCallback(t *testing.T, url string) bool {
 	callBackURL := url
-	items := strings.Split(callBackURL, "?")
+	items := strings.Split(callBackURL, "/qr-store?")
 	if len(items) != 2 {
 		return false
 	}
-	if items[0] != cfg.Host+"/qr-store" {
+	if items[0] != "iden3comm://?request_uri="+cfg.Host {
 		return false
 	}
 
