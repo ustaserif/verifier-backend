@@ -38,7 +38,7 @@ paths:
           $ref: '#/components/responses/500'
 
   /sign-in:
-    get:
+    post:
       summary: Sign in
       operationId: Sign in
       tags:
