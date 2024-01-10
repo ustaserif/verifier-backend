@@ -30,9 +30,9 @@ type Health = map[string]interface{}
 // QRCode defines model for QRCode.
 type QRCode struct {
 	Body struct {
-		CallbackUrl *string  `json:"callbackUrl,omitempty"`
-		Reason      *string  `json:"reason,omitempty"`
-		Scope       *[]Scope `json:"scope,omitempty"`
+		CallbackUrl string  `json:"callbackUrl"`
+		Reason      string  `json:"reason"`
+		Scope       []Scope `json:"scope"`
 	} `json:"body"`
 	From string  `json:"from"`
 	Id   string  `json:"id"`
@@ -635,6 +635,15 @@ type QRStore200JSONResponse QRStoreResponse
 func (response QRStore200JSONResponse) VisitQRStoreResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type QRStore400JSONResponse struct{ N400JSONResponse }
+
+func (response QRStore400JSONResponse) VisitQRStoreResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
