@@ -24,9 +24,9 @@ func TestSignIn(t *testing.T) {
 	}
 
 	type bodyType struct {
-		CallbackUrl *string  `json:"callbackUrl,omitempty"`
-		Reason      *string  `json:"reason,omitempty"`
-		Scope       *[]Scope `json:"scope,omitempty"`
+		CallbackUrl string  `json:"callbackUrl"`
+		Reason      string  `json:"reason"`
+		Scope       []Scope `json:"scope"`
 	}
 
 	type testConfig struct {
@@ -58,8 +58,12 @@ func TestSignIn(t *testing.T) {
 				httpCode: http.StatusOK,
 				SignInResponseObject: SignIn200JSONResponse{
 					QrCode: QRCode{
-						Body: bodyType{
-							Scope: &[]Scope{
+						Body: struct {
+							CallbackUrl string  `json:"callbackUrl"`
+							Reason      string  `json:"reason"`
+							Scope       []Scope `json:"scope"`
+						}(bodyType{
+							Scope: []Scope{
 								{
 									CircuitId: "credentialAtomicQuerySigV2",
 									Id:        1,
@@ -75,7 +79,7 @@ func TestSignIn(t *testing.T) {
 									},
 								},
 							},
-						},
+						}),
 						From: cfg.MumbaiSenderDID,
 						To:   nil,
 						Typ:  "application/iden3comm-plain-json",
@@ -108,7 +112,7 @@ func TestSignIn(t *testing.T) {
 				SignInResponseObject: SignIn200JSONResponse{
 					QrCode: QRCode{
 						Body: bodyType{
-							Scope: &[]Scope{
+							Scope: []Scope{
 								{
 									CircuitId: "credentialAtomicQuerySigV2",
 									Id:        1,
@@ -156,7 +160,7 @@ func TestSignIn(t *testing.T) {
 				SignInResponseObject: SignIn200JSONResponse{
 					QrCode: QRCode{
 						Body: bodyType{
-							Scope: &[]Scope{
+							Scope: []Scope{
 								{
 									CircuitId: "credentialAtomicQueryMTPV2",
 									Id:        1,
@@ -373,9 +377,9 @@ func TestQRStore(t *testing.T) {
 	server := New(cfg, keysLoader)
 
 	type bodyType struct {
-		CallbackUrl *string  `json:"callbackUrl,omitempty"`
-		Reason      *string  `json:"reason,omitempty"`
-		Scope       *[]Scope `json:"scope,omitempty"`
+		CallbackUrl string  `json:"callbackUrl"`
+		Reason      string  `json:"reason"`
+		Scope       []Scope `json:"scope"`
 	}
 
 	type expected struct {
@@ -394,14 +398,16 @@ func TestQRStore(t *testing.T) {
 			name: "valid request",
 			body: QRStoreRequestObject{
 				Body: &QRStoreJSONRequestBody{
-					From: "",
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
 					To:   common.ToPointer(""),
-					Typ:  "",
-					Type: "",
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
 					Body: bodyType{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      common.ToPointer("reason"),
-						Scope: &[]Scope{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
 							{
 								CircuitId: "credentialAtomicQuerySigV2",
 								Id:        1,
@@ -415,6 +421,246 @@ func TestQRStore(t *testing.T) {
 				httpCode: http.StatusOK,
 			},
 		},
+		{
+			name: "invalid request missing from field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing type field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing thid field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing id field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing body field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing body field 2",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing scope field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing callback field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						Reason: "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing reason field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
+		{
+			name: "invalid request missing typ field",
+			body: QRStoreRequestObject{
+				Body: &QRStoreJSONRequestBody{
+					From: "",
+					To:   common.ToPointer(""),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
+					Body: bodyType{
+						CallbackUrl: "http://localhost:3000/callback?n=1",
+						Reason:      "reason",
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query:     map[string]interface{}{},
+							},
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusBadRequest,
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rr, err := server.QRStore(ctx, tc.body)
@@ -424,6 +670,9 @@ func TestQRStore(t *testing.T) {
 				response, ok := rr.(QRStore200JSONResponse)
 				require.True(t, ok)
 				assert.True(t, isValidaQrStoreCallback(t, string(response)))
+			case http.StatusBadRequest:
+				_, ok := rr.(QRStore400JSONResponse)
+				require.True(t, ok)
 			default:
 				t.Errorf("unexpected http code: %d", tc.expected.httpCode)
 			}
@@ -451,8 +700,8 @@ func isValidaQrStoreCallback(t *testing.T, url string) bool {
 	return true
 }
 
-func isValidCallBack(t *testing.T, url *string) bool {
-	callBackURL := *url
+func isValidCallBack(t *testing.T, url string) bool {
+	callBackURL := url
 	items := strings.Split(callBackURL, "?")
 	if len(items) != 2 {
 		return false

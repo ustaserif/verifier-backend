@@ -145,6 +145,70 @@ func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRS
 		}, nil
 	}
 
+	if request.Body.Body.CallbackUrl == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field callbackUrl body is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.Body.Reason == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field reason body is empty",
+			},
+		}, nil
+	}
+
+	if len(request.Body.Body.Scope) == 0 {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field scope is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.From == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field from is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.Id == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field id is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.Thid == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field thid is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.Typ == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field Typ is empty",
+			},
+		}, nil
+	}
+
+	if request.Body.Type == "" {
+		return QRStore400JSONResponse{
+			N400JSONResponse: N400JSONResponse{
+				Message: "field type is empty",
+			},
+		}, nil
+	}
+
 	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
 	hostURL := s.cfg.Host
 	shortURL := fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", hostURL, "/qr-store", uv.String())
@@ -217,15 +281,15 @@ func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
 	}
 
 	type bodyType struct {
-		CallbackUrl *string  `json:"callbackUrl,omitempty"`
-		Reason      *string  `json:"reason,omitempty"`
-		Scope       *[]Scope `json:"scope,omitempty"`
+		CallbackUrl string  `json:"callbackUrl"`
+		Reason      string  `json:"reason"`
+		Scope       []Scope `json:"scope"`
 	}
 
 	body := bodyType{
-		CallbackUrl: &request.Body.CallbackURL,
-		Reason:      &request.Body.Reason,
-		Scope:       &scopes,
+		CallbackUrl: request.Body.CallbackURL,
+		Reason:      request.Body.Reason,
+		Scope:       scopes,
 	}
 
 	qrCode := QRCode{

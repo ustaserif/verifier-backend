@@ -98,6 +98,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QRStoreResponse'
+        '400':
+          $ref: '#/components/responses/400'
         '500':
           $ref: '#/components/responses/500'
     get:
@@ -243,6 +245,10 @@ components:
           example: '6dc645a6-2be3-4099-a645-20784ee53cd0'
         body:
           type: object
+          required:
+            - callbackUrl
+            - reason
+            - scope
           properties:
             callbackUrl:
               type: string
