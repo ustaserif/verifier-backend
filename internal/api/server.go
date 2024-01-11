@@ -25,7 +25,6 @@ import (
 )
 
 const (
-	ttl                  = 60 * time.Minute
 	randomSeed           = 1000000
 	stateTransitionDelay = time.Minute * 5
 )
@@ -42,7 +41,7 @@ func New(cfg config.Config, keyLoader *loaders.FSKeyLoader) *Server {
 	return &Server{
 		cfg:       cfg,
 		keyLoader: keyLoader,
-		cache:     cache.New(ttl, ttl),
+		cache:     cache.New(cfg.CacheExpiration.AsDuration(), cfg.CacheExpiration.AsDuration()),
 	}
 }
 
@@ -311,7 +310,7 @@ func getQRCode(request protocol.AuthorizationRequestMessage) QRCode {
 }
 
 // Status - status
-func (s *Server) Status(ctx context.Context, request StatusRequestObject) (StatusResponseObject, error) {
+func (s *Server) Status(_ context.Context, request StatusRequestObject) (StatusResponseObject, error) {
 	id := request.Params.SessionID
 	item, ok := s.cache.Get(id)
 	if !ok {
@@ -346,7 +345,7 @@ func (s *Server) Status(ctx context.Context, request StatusRequestObject) (Statu
 		var m string
 		err = json.Unmarshal(b, &m)
 		if err != nil {
-			log.Println(err.Error())
+			log.Errorf("failed to unmarshal response: %v", err)
 			return Status500JSONResponse{
 				N500JSONResponse: N500JSONResponse{
 					Message: "failed to unmarshal response",
