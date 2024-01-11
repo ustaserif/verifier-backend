@@ -14,6 +14,12 @@ make stop     # stop the server
 make restart  # stop and remove the container, build the image and run the container
 ```
 
+### Cache expiration
+The default cache expiration is 1 hour. This can be changed by setting the environment variable `VERIFIER_BACKEND_CACHE_EXPIRATION` to the desired value.
+For instance, to set the cache expiration to 30 minutes, you can run the following command:
+```shell
+VERIFIER_BACKEND_CACHE_EXPIRATION=30m
+```
 
 
 #### /sign-in body example:
