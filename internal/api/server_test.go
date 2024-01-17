@@ -185,6 +185,56 @@ func TestSignIn(t *testing.T) {
 			},
 		},
 		{
+			name: "valid request for credentialAtomicQueryV3-beta.0 circuit with KYCAgeCredential",
+			body: SignInRequestObject{
+				Body: &SignInJSONRequestBody{
+					ChainID:   "80001",
+					CircuitID: "credentialAtomicQueryMTPV2",
+					Query: jsonToMap(t, `{
+						"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+						"allowedIssuers": ["*"],
+						"type": "KYCAgeCredential",
+						"credentialSubject": {
+							"birthday": {
+								"$eq": 19960424
+							}
+						},
+						"proofType": "BJJSignature2021"
+					  }`),
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusOK,
+				SignInResponseObject: SignIn200JSONResponse{
+					QrCode: QRCode{
+						Body: bodyType{
+							Scope: []Scope{
+								{
+									CircuitId: "credentialAtomicQueryMTPV2",
+									Id:        1,
+									Query: map[string]interface{}{
+										"allowedIssuers": []interface{}{"*"},
+										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+										"credentialSubject": map[string]interface{}{
+											"birthday": map[string]interface{}{
+												"$eq": float64(19960424),
+											},
+										},
+										"type":      "KYCAgeCredential",
+										"proofType": "BJJSignature2021",
+									},
+								},
+							},
+						},
+						From: cfg.MumbaiSenderDID,
+						To:   nil,
+						Typ:  "application/iden3comm-plain-json",
+						Type: "https://iden3-communication.io/authorization/1.0/request",
+					},
+				},
+			},
+		},
+		{
 			name: "invalid request - invalid ChainID",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
@@ -212,7 +262,7 @@ func TestSignIn(t *testing.T) {
 				httpCode: http.StatusBadRequest,
 				SignInResponseObject: SignIn400JSONResponse{
 					N400JSONResponse{
-						Message: "invalid circuitID, just credentialAtomicQuerySigV2 and credentialAtomicQueryMTPV2 are supported",
+						Message: "invalid circuitID, just credentialAtomicQuerySigV2, credentialAtomicQueryMTPV2 and credentialAtomicQueryV3-beta.0 are supported",
 					},
 				},
 			},

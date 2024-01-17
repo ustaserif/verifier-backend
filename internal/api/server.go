@@ -405,12 +405,12 @@ func checkRequest(request SignInRequestObject) (SignInResponseObject, error) {
 		}}, nil
 	}
 
-	if request.Body.CircuitID != "credentialAtomicQuerySigV2" && request.Body.CircuitID != "credentialAtomicQueryMTPV2" {
+	if request.Body.CircuitID != "credentialAtomicQuerySigV2" && request.Body.CircuitID != "credentialAtomicQueryMTPV2" && request.Body.CircuitID != "credentialAtomicQueryV3-beta.0" {
 		log.WithFields(log.Fields{
 			"circuitID": request.Body.CircuitID,
 		}).Error("invalid circuitID")
 		return SignIn400JSONResponse{N400JSONResponse: N400JSONResponse{
-			Message: "invalid circuitID, just credentialAtomicQuerySigV2 and credentialAtomicQueryMTPV2 are supported",
+			Message: "invalid circuitID, just credentialAtomicQuerySigV2, credentialAtomicQueryMTPV2 and credentialAtomicQueryV3-beta.0 are supported",
 		}}, nil
 	}
 
