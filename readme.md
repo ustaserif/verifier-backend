@@ -22,7 +22,7 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
 ```
 
 
-#### /sign-in body example:
+#### sign-in body example - credentialAtomicQuerySigV2:
 
 ```json
 {
@@ -42,7 +42,7 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
 }
 ```
 
-#### /sign-in payload response sample:
+#### sign-in payload response sample:
 
 ```json
 {
@@ -74,5 +74,72 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
         "type": "https://iden3-communication.io/authorization/1.0/request"
     },
     "sessionID": 63622
+}
+```
+
+### More Samples
+
+#### sign-in body example - credentialAtomicQueryMTPV2:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryMTPV2",
+  "skipClaimRevocationCheck": false, 
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+        "birthday": {
+            "$eq": 19960424
+        }
+    }
+  }
+}
+```
+
+> Note: `credentialAtomicQueryV3-beta.0` is the same circuit for BJJSignature2021 and Iden3SparseMerkleTreeProof. 
+> You must to specify the proofType in the query. 
+
+#### sign-in body example - credentialAtomicQueryV3-beta.0 - BJJSignature2021:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "skipClaimRevocationCheck": false,
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+      "birthday": {
+        "$eq": 19960424
+      }
+    },
+    "proofType": "BJJSignature2021"
+  }
+}
+```
+
+#### sign-in body example - credentialAtomicQueryV3-beta.0 - Iden3SparseMerkleTreeProof:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "skipClaimRevocationCheck": false,
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+      "birthday": {
+        "$eq": 19960424
+      }
+    },
+    "proofType": "Iden3SparseMerkleTreeProof"
+  }
 }
 ```
