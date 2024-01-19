@@ -87,6 +87,15 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, fmt.Errorf("sessionID not found")
 	}
 
+	if _, ok := authRequest.(protocol.AuthorizationRequestMessage); !ok {
+		log.Error("failed to cast authRequest to AuthorizationRequestMessage")
+		return Callback500JSONResponse{
+			N500JSONResponse: N500JSONResponse{
+				Message: "failed to cast authRequest to AuthorizationRequestMessage",
+			},
+		}, nil
+	}
+
 	w3cLoader := loader.NewW3CDocumentLoader(nil, s.cfg.IPFSURL)
 
 	resolvers := s.parseResolverSettings()
