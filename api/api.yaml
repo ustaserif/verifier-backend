@@ -59,6 +59,7 @@ paths:
                       "scope": [
                         {
                           "circuitID": "credentialAtomicQuerySigV2",
+                          "id": 1,
                           "query": {
                             "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
                             "allowedIssuers": [ "*" ],
@@ -80,6 +81,7 @@ paths:
                       "scope": [
                         {
                           "circuitID": "credentialAtomicQuerySigV2",
+                          "id": 1,
                           "query": {
                             "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
                             "allowedIssuers": [ "*" ],
@@ -342,6 +344,7 @@ components:
       properties:
         id:
           type: integer
+          format: uint32
           example: 1
         circuitId:
           type: string
@@ -353,6 +356,7 @@ components:
       example:
         {
           "circuitID": "credentialAtomicQuerySigV2",
+          "id": 1,
           "query": {
             "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
             "allowedIssuers": [ "*" ],
@@ -404,28 +408,33 @@ components:
         transactionData:
           $ref : '#/components/schemas/TransactionData'
 
+    ScopeRequest:
+      type: object
+      required:
+        - circuitId
+        - query
+        - id
+      properties:
+        id:
+          type: integer
+          format: uint32
+          example: 1
+        circuitId:
+          type: string
+          example: 'credentialAtomicQuerySigV2'
+        query:
+          $ref: '#/components/schemas/Query'
+        transactionData:
+          $ref : '#/components/schemas/TransactionData'
+        params:
+          $ref: '#/components/schemas/ScopeParams'
+
     ScopeParams:
       type: object
       example:
         {
           "nullifierSessionId": "123443290439234342342423423423423"
         }
-
-
-    ScopeRequest:
-      type: object
-      required:
-        - circuitId
-        - query
-      properties:
-        circuitId:
-          type: string
-          example: 'credentialAtomicQuerySigV2'
-        query:
-          $ref: '#/components/schemas/Query'
-        params:
-          $ref: '#/components/schemas/ScopeParams'
-
 
     TransactionDataResponse:
       type: object
