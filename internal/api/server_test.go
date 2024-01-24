@@ -392,6 +392,71 @@ func TestSignIn(t *testing.T) {
 			},
 		},
 		{
+			name: "valid request for credentialAtomicQueryV3OnChain-beta.0 circuit",
+			body: SignInRequestObject{
+				Body: &SignInJSONRequestBody{
+					ChainID: common.ToPointer("80001"),
+					Scope: []ScopeRequest{
+						{
+							Id:        3,
+							CircuitId: "credentialAtomicQueryV3OnChain-beta.0",
+							Query: jsonToMap(t, `{
+							"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+							"allowedIssuers": ["*"],
+							"type": "KYCAgeCredential",
+							"credentialSubject": {
+								"birthday": {
+									
+								}
+							},
+							"proofType": "BJJSignature2021"
+						  }`),
+						},
+					},
+					TransactionData: &TransactionData{
+						ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
+						MethodID:        "b68967e2",
+						ChainID:         80001,
+						Network:         mumbaiNetwork,
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusOK,
+				SignInResponseObject: SignIn200JSONResponse{
+					QrCode: QRCode{
+						Body: Body{
+							Scope: []Scope{
+								{
+									CircuitId: "credentialAtomicQueryV3OnChain-beta.0",
+									Id:        3,
+									Query: map[string]interface{}{
+										"allowedIssuers": []interface{}{"*"},
+										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+										"credentialSubject": map[string]interface{}{
+											"birthday": map[string]interface{}{},
+										},
+										"type":      "KYCAgeCredential",
+										"proofType": "BJJSignature2021",
+									},
+								},
+							},
+							TransactionData: &TransactionDataResponse{
+								ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
+								MethodId:        "b68967e2",
+								ChainId:         80001,
+								Network:         mumbaiNetwork,
+							},
+						},
+						From: cfg.MumbaiSenderDID,
+						To:   nil,
+						Typ:  "application/iden3comm-plain-json",
+						Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
+					},
+				},
+			},
+		},
+		{
 			name: "invalid request for credentialAtomicQueryV3-beta.0 and KYCAgeCredential circuits",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
@@ -482,7 +547,7 @@ func TestSignIn(t *testing.T) {
 				httpCode: http.StatusBadRequest,
 				SignInResponseObject: SignIn400JSONResponse{
 					N400JSONResponse{
-						Message: "field circuitId value is wrong, got credentialAtomicQueryV3-beta.0, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain",
+						Message: "field circuitId value is wrong, got credentialAtomicQueryV3-beta.0, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain or credentialAtomicQueryV3OnChain-beta.0",
 					},
 				},
 			},
@@ -965,6 +1030,13 @@ func TestSignIn(t *testing.T) {
 				assert.Equal(t, expected.QrCode.Typ, response.QrCode.Typ)
 				assert.Equal(t, expected.QrCode.Type, response.QrCode.Type)
 				assert.Equal(t, expected.QrCode.To, response.QrCode.To)
+
+				if expected.QrCode.Body.TransactionData != nil {
+					assert.Equal(t, expected.QrCode.Body.TransactionData.ChainId, response.QrCode.Body.TransactionData.ChainId)
+					assert.Equal(t, expected.QrCode.Body.TransactionData.ContractAddress, response.QrCode.Body.TransactionData.ContractAddress)
+					assert.Equal(t, expected.QrCode.Body.TransactionData.MethodId, response.QrCode.Body.TransactionData.MethodId)
+					assert.Equal(t, expected.QrCode.Body.TransactionData.Network, response.QrCode.Body.TransactionData.Network)
+				}
 
 			case http.StatusBadRequest:
 				response, ok := rr.(SignIn400JSONResponse)
