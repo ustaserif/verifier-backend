@@ -252,7 +252,7 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 			QrCode:    getAuthReqQRCode(authReq),
 			SessionID: sessionID,
 		}, nil
-	case "credentialAtomicQuerySigV2OnChain", "credentialAtomicQueryMTPV2OnChain":
+	case "credentialAtomicQuerySigV2OnChain", "credentialAtomicQueryMTPV2OnChain", "credentialAtomicQueryV3OnChain-beta.0":
 		invokeReq, err := getContractInvokeRequestOnChain(request, s.cfg)
 		if err != nil {
 			log.Error(err)
@@ -442,8 +442,8 @@ func validateRequestQuery(offChainRequest bool, scope []ScopeRequest) error {
 		}
 
 		if !offChainRequest {
-			if scope.CircuitId != "credentialAtomicQuerySigV2OnChain" && scope.CircuitId != "credentialAtomicQueryMTPV2OnChain" {
-				return fmt.Errorf("field circuitId value is wrong, got %s, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain", scope.CircuitId)
+			if scope.CircuitId != "credentialAtomicQuerySigV2OnChain" && scope.CircuitId != "credentialAtomicQueryMTPV2OnChain" && scope.CircuitId != "credentialAtomicQueryV3OnChain-beta.0" {
+				return fmt.Errorf("field circuitId value is wrong, got %s, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain or credentialAtomicQueryV3OnChain-beta.0", scope.CircuitId)
 			}
 		}
 
