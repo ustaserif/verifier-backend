@@ -585,6 +585,10 @@ func getVerificationResponseScopes(scopes []protocol.ZeroKnowledgeProofResponse)
 	resp := make([]models.VerificationResponseScope, 0, len(scopes))
 	ps := circuits.AtomicQueryV3PubSignals{}
 	for _, scope := range scopes {
+		if scope.CircuitID != "credentialAtomicQueryV3-beta.0" {
+			return []models.VerificationResponseScope{}, nil
+		}
+
 		signals, err := json.Marshal(scope.PubSignals)
 		if err != nil {
 			return nil, err
