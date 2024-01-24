@@ -37,6 +37,19 @@ type GenericErrorMessage struct {
 // Health defines model for Health.
 type Health = map[string]interface{}
 
+// JWZMetadata defines model for JWZMetadata.
+type JWZMetadata struct {
+	Nullifiers *[]JWZProofs `json:"nullifiers"`
+	UserDID    string       `json:"userDID"`
+}
+
+// JWZProofs defines model for JWZProofs.
+type JWZProofs struct {
+	Nullifier          string `json:"nullifier"`
+	NullifierSessionID string `json:"nullifierSessionID"`
+	ScopeID            uint32 `json:"scopeID"`
+}
+
 // QRCode defines model for QRCode.
 type QRCode struct {
 	Body Body    `json:"body"`
@@ -101,7 +114,8 @@ type SingInResponse struct {
 
 // StatusResponse defines model for StatusResponse.
 type StatusResponse struct {
-	Jwz *string `json:"jwz"`
+	Jwz         *string      `json:"jwz"`
+	JwzMetadata *JWZMetadata `json:"jwzMetadata,omitempty"`
 
 	// Message error message
 	Message *string `json:"message"`

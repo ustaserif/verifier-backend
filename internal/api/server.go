@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/iden3/go-circuits/v2"
 	auth "github.com/iden3/go-iden3-auth/v2"
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	"github.com/iden3/go-iden3-auth/v2/pubsignals"
@@ -24,6 +25,7 @@ import (
 	"github.com/0xPolygonID/verifier-backend/internal/common"
 	"github.com/0xPolygonID/verifier-backend/internal/config"
 	"github.com/0xPolygonID/verifier-backend/internal/loader"
+	"github.com/0xPolygonID/verifier-backend/internal/models"
 )
 
 const (
@@ -34,7 +36,7 @@ const (
 	statusError          = "error"
 	mumbaiNetwork        = "80001"
 	mainnetNetwork       = "137"
-	defaultReason        = "test flow"
+	defaultReason        = "for testing purposes"
 )
 
 // Server represents the API server
@@ -109,7 +111,7 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, err
 	}
 
-	_, err = verifier.FullVerify(ctx, *request.Body,
+	authRespMsg, err := verifier.FullVerify(ctx, *request.Body,
 		authRequest.(protocol.AuthorizationRequestMessage),
 		pubsignals.WithAcceptedStateTransitionDelay(stateTransitionDelay))
 	if err != nil {
@@ -121,7 +123,12 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 		return nil, err
 	}
 
-	s.cache.Set(sessionID.String(), *request.Body, cache.DefaultExpiration)
+	scopes, err := getVerificationResponseScopes(authRespMsg.Body.Scope)
+	if err != nil {
+		return nil, err
+	}
+
+	s.cache.Set(sessionID.String(), models.VerificationResponse{Jwz: *request.Body, UserDID: authRespMsg.From, Scopes: scopes}, cache.DefaultExpiration)
 
 	return Callback200JSONResponse{}, nil
 }
@@ -279,31 +286,8 @@ func (s *Server) Status(_ context.Context, request StatusRequestObject) (StatusR
 			Status:  statusError,
 			Message: common.ToPointer(value.Error()),
 		}, nil
-	case string:
-		b, err := json.Marshal(value)
-		if err != nil {
-			log.Println(err.Error())
-			return Status500JSONResponse{
-				N500JSONResponse: N500JSONResponse{
-					Message: "failed to marshal response",
-				},
-			}, nil
-		}
-		//nolint // -
-		var m string
-		err = json.Unmarshal(b, &m)
-		if err != nil {
-			log.Errorf("failed to unmarshal response: %v", err)
-			return Status500JSONResponse{
-				N500JSONResponse: N500JSONResponse{
-					Message: "failed to unmarshal response",
-				},
-			}, nil
-		}
-		return Status200JSONResponse{
-			Status: statusSuccess,
-			Jwz:    common.ToPointer(m),
-		}, nil
+	case models.VerificationResponse:
+		return getStatusVerificationResponse(value), nil
 	}
 	return nil, nil
 }
@@ -587,4 +571,57 @@ func getReason(reason *string) string {
 		return defaultReason
 	}
 	return *reason
+}
+
+func getVerificationResponseScopes(scopes []protocol.ZeroKnowledgeProofResponse) ([]models.VerificationResponseScope, error) {
+	if len(scopes) == 0 {
+		return nil, errors.New("scopes are empty")
+	}
+
+	if scopes[0].CircuitID != "credentialAtomicQueryV3-beta.0" {
+		return []models.VerificationResponseScope{}, nil
+	}
+
+	resp := make([]models.VerificationResponseScope, 0, len(scopes))
+	ps := circuits.AtomicQueryV3PubSignals{}
+	for _, scope := range scopes {
+		signals, err := json.Marshal(scope.PubSignals)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := ps.PubSignalsUnmarshal(signals); err != nil {
+			return nil, err
+		}
+
+		resp = append(resp, models.VerificationResponseScope{
+			ID:                 scope.ID,
+			NullifierSessionID: ps.NullifierSessionID.String(),
+			Nullifier:          ps.Nullifier.String(),
+		})
+	}
+
+	return resp, nil
+}
+
+func getStatusVerificationResponse(verification models.VerificationResponse) Status200JSONResponse {
+	jwzMetadata := &JWZMetadata{UserDID: verification.UserDID}
+
+	if len(verification.Scopes) > 0 {
+		nullifiers := make([]JWZProofs, 0, len(verification.Scopes))
+		for _, scope := range verification.Scopes {
+			nullifiers = append(nullifiers, JWZProofs{
+				ScopeID:            scope.ID,
+				NullifierSessionID: scope.NullifierSessionID,
+				Nullifier:          scope.Nullifier,
+			})
+		}
+		jwzMetadata.Nullifiers = &nullifiers
+	}
+
+	return Status200JSONResponse{
+		Status:      statusSuccess,
+		Jwz:         common.ToPointer(verification.Jwz),
+		JwzMetadata: jwzMetadata,
+	}
 }
