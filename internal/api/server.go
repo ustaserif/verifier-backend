@@ -43,15 +43,18 @@ const (
 type Server struct {
 	keyLoader *loaders.FSKeyLoader
 	cfg       config.Config
+	qrStore   *QRcodeStore
 	cache     *cache.Cache
 }
 
 // New creates a new API server
 func New(cfg config.Config, keyLoader *loaders.FSKeyLoader) *Server {
+	c := cache.New(cfg.CacheExpiration.AsDuration(), cfg.CacheExpiration.AsDuration()/10)
 	return &Server{
 		cfg:       cfg,
 		keyLoader: keyLoader,
-		cache:     cache.New(cfg.CacheExpiration.AsDuration(), cfg.CacheExpiration.AsDuration()),
+		qrStore:   NewQRCodeStore(c),
+		cache:     c,
 	}
 }
 
@@ -142,93 +145,16 @@ func (s *Server) Callback(ctx context.Context, request CallbackRequestObject) (C
 }
 
 // GetQRCodeFromStore - get QR code from store
-func (s *Server) GetQRCodeFromStore(ctx context.Context, request GetQRCodeFromStoreRequestObject) (GetQRCodeFromStoreResponseObject, error) {
-	sessionID := request.Params.Id
-	data, ok := s.cache.Get(sessionID.String())
-	if !ok {
-		log.Println("sessionID not found")
+func (s *Server) GetQRCodeFromStore(_ context.Context, request GetQRCodeFromStoreRequestObject) (GetQRCodeFromStoreResponseObject, error) {
+	qrCode, err := s.qrStore.Get(request.Params.Id)
+	if err != nil {
 		return GetQRCodeFromStore500JSONResponse{
 			N500JSONResponse: N500JSONResponse{
-				Message: "sessionID not found",
+				Message: fmt.Sprintf("Error getting QRCode: %s", err.Error()),
 			},
 		}, nil
 	}
-
-	response, ok := data.(*QRCode)
-	if !ok {
-		log.Println("failed to cast data to QRCode")
-		return GetQRCodeFromStore500JSONResponse{
-			N500JSONResponse: N500JSONResponse{
-				Message: "failed to cast data to QRCode",
-			},
-		}, nil
-	}
-	return GetQRCodeFromStore200JSONResponse(*response), nil
-}
-
-// QRStore - store QR code
-func (s *Server) QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error) {
-	if request.Body.Body.Reason == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field reason body is empty",
-			},
-		}, nil
-	}
-
-	if len(request.Body.Body.Scope) == 0 {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field scope is empty",
-			},
-		}, nil
-	}
-
-	if request.Body.From == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field from is empty",
-			},
-		}, nil
-	}
-
-	if request.Body.Id == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field id is empty",
-			},
-		}, nil
-	}
-
-	if request.Body.Thid == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field thid is empty",
-			},
-		}, nil
-	}
-
-	if request.Body.Typ == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field Typ is empty",
-			},
-		}, nil
-	}
-
-	if request.Body.Type == "" {
-		return QRStore400JSONResponse{
-			N400JSONResponse: N400JSONResponse{
-				Message: "field type is empty",
-			},
-		}, nil
-	}
-
-	uv := uuid.New()
-	s.cache.Set(uv.String(), request.Body, 1*time.Hour)
-	hostURL := s.cfg.Host
-	shortURL := fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", hostURL, "/qr-store", uv.String())
-	return QRStore200JSONResponse(shortURL), nil
+	return GetQRCodeFromStore200JSONResponse(*qrCode), nil
 }
 
 // SignIn - sign in
@@ -248,8 +174,13 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 			return SignIn400JSONResponse{N400JSONResponse{err.Error()}}, nil
 		}
 		s.cache.Set(sessionID.String(), authReq, cache.DefaultExpiration)
+		qrCode := getAuthReqQRCode(authReq)
+		shortURL, err := s.qrStore.Save(s.cfg.Host, qrCode)
+		if err != nil {
+			return SignIn500JSONResponse{N500JSONResponse{Message: fmt.Sprintf("failed to cache QR code: %s", err.Error())}}, nil
+		}
 		return SignIn200JSONResponse{
-			QrCode:    getAuthReqQRCode(authReq),
+			QrCode:    shortURL,
 			SessionID: sessionID,
 		}, nil
 	case "credentialAtomicQuerySigV2OnChain", "credentialAtomicQueryMTPV2OnChain", "credentialAtomicQueryV3OnChain-beta.0":
@@ -259,8 +190,13 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 			return SignIn400JSONResponse{N400JSONResponse{err.Error()}}, nil
 		}
 		s.cache.Set(sessionID.String(), invokeReq, cache.DefaultExpiration)
+		qrCode := getInvokeContractQRCode(invokeReq)
+		shortURL, err := s.qrStore.Save(s.cfg.Host, qrCode)
+		if err != nil {
+			return SignIn500JSONResponse{N500JSONResponse{Message: fmt.Sprintf("failed to cache QR code: %s", err.Error())}}, nil
+		}
 		return SignIn200JSONResponse{
-			QrCode:    getInvokeContractQRCode(invokeReq),
+			QrCode:    shortURL,
 			SessionID: sessionID,
 		}, nil
 	default:

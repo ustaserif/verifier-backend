@@ -137,27 +137,6 @@ paths:
           $ref: '#/components/responses/500'
 
   /qr-store:
-    post:
-      summary: Store QRCode
-      operationId: QRStore
-      tags:
-        - Verifier
-      requestBody:
-          content:
-            application/json:
-                schema:
-                  $ref: '#/components/schemas/QRStoreRequest'
-      responses:
-        '200':
-          description: QR Indirection
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/QRStoreResponse'
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          $ref: '#/components/responses/500'
     get:
       summary: Get QRCode from store
       operationId: GetQRCodeFromStore
@@ -303,7 +282,8 @@ components:
           sessionID:
             $ref: '#/components/schemas/UUID'
           qrCode:
-            $ref: '#/components/schemas/QRCode'
+            type: string
+            example: iden3comm://?request_uri=https%3A%2F%2Fissuer-demo.polygonid.me%2Fapi%2Fqr-store%3Fid%3Df780a169-8959-4380-9461-f7200e2ed3f4
 
     QRCode:
       type: object
