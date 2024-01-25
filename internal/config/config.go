@@ -26,7 +26,7 @@ type Config struct {
 	MainSenderDID        string   `envconfig:"main_sender_did" default:"0x2C1DdDc4C8b6BdAaE831eF04bF4FfDfA575d8bA7"`
 	IPFSURL              string   `envconfig:"ipfs_url" default:"https://gateway.pinata.cloud"`
 	ResolverSettingsPath string   `envconfig:"resolver_settings_path" default:"./resolvers_settings.yaml"`
-	CacheExpiration      CacheTTL `envconfig:"cache_expiration" default:"60m"`
+	CacheExpiration      CacheTTL `envconfig:"cache_expiration" default:"48h"`
 	ResolverSettings     ResolverSettings
 }
 
