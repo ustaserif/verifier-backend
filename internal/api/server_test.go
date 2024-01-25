@@ -259,7 +259,7 @@ func TestSignIn(t *testing.T) {
 							"proofType": "BJJSignature2021"
 						  }`),
 							Params: common.ToPointer(map[string]interface{}{
-								"nullifierSessionId": big.NewInt(100).String(),
+								"nullifierSessionID": big.NewInt(100).String(),
 							}),
 						},
 					},
@@ -267,33 +267,35 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				QRCode: QRCode{
-					Body: Body{
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQueryV3-beta.0",
-								Id:        1,
-								Query: map[string]interface{}{
-									"allowedIssuers": []interface{}{"*"},
-									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-									"credentialSubject": map[string]interface{}{
-										"birthday": map[string]interface{}{
-											"$eq": float64(19960424),
+				SignInResponseObject: SignIn200JSONResponse{
+					QrCode: QRCode{
+						Body: Body{
+							Scope: []Scope{
+								{
+									CircuitId: "credentialAtomicQueryV3-beta.0",
+									Id:        1,
+									Query: map[string]interface{}{
+										"allowedIssuers": []interface{}{"*"},
+										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+										"credentialSubject": map[string]interface{}{
+											"birthday": map[string]interface{}{
+												"$eq": float64(19960424),
+											},
 										},
+										"type":      "KYCAgeCredential",
+										"proofType": "BJJSignature2021",
 									},
-									"type":      "KYCAgeCredential",
-									"proofType": "BJJSignature2021",
+									Params: common.ToPointer(map[string]interface{}{
+										"nullifierSessionID": big.NewInt(100).String(),
+									}),
 								},
-								Params: common.ToPointer(map[string]interface{}{
-									"nullifierSessionId": big.NewInt(100).String(),
-								}),
 							},
 						},
+						From: cfg.MumbaiSenderDID,
+						To:   nil,
+						Typ:  "application/iden3comm-plain-json",
+						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
-					From: cfg.MumbaiSenderDID,
-					To:   nil,
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -596,7 +598,7 @@ func TestSignIn(t *testing.T) {
 							"proofType": "BJJSignature2021"
 						  }`),
 							Params: common.ToPointer(map[string]interface{}{
-								"nullifierSessionId": "invalid",
+								"nullifierSessionID": "invalid",
 							}),
 						},
 					},
@@ -604,7 +606,7 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode:     http.StatusBadRequest,
-				ErrorMessage: "nullifierSessionId is not a valid big integer",
+				ErrorMessage: "nullifierSessionID is not a valid big integer",
 			},
 		},
 		{
