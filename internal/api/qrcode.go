@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,14 +12,17 @@ type qrCache interface {
 	Set(id string, data any, duration time.Duration)
 }
 
+// QRcodeStore is a storage of qrCodes in a cache.
 type QRcodeStore struct {
 	cache qrCache
 }
 
+// NewQRCodeStore creates a new QRcodeStore.
 func NewQRCodeStore(c qrCache) *QRcodeStore {
 	return &QRcodeStore{cache: c}
 }
 
+// Get returns a QRCode from the cache using the qr code id as key
 func (s *QRcodeStore) Get(id uuid.UUID) (*QRCode, error) {
 	data, ok := s.cache.Get(s.key() + id.String())
 	if !ok {
@@ -34,10 +36,11 @@ func (s *QRcodeStore) Get(id uuid.UUID) (*QRCode, error) {
 	return &qr, nil
 }
 
-func (s *QRcodeStore) Save(host string, qrCode QRCode) (string, error) {
-	uv := uuid.New()
-	s.cache.Set(s.key()+uv.String(), qrCode, 1*time.Hour)
-	return fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", host, "/qr-store", uv.String()), nil
+// Save stores a QRCode in the cache and returns the id of the qr code.
+func (s *QRcodeStore) Save(qrCode QRCode) (uuid.UUID, error) {
+	id := uuid.New()
+	s.cache.Set(s.key()+id.String(), qrCode, 1*time.Hour)
+	return id, nil
 }
 
 func (s *QRcodeStore) key() string {

@@ -29,7 +29,6 @@ import (
 )
 
 const (
-	randomSeed           = 1000000
 	stateTransitionDelay = time.Minute * 5
 	statusPending        = "pending"
 	statusSuccess        = "success"
@@ -49,7 +48,7 @@ type Server struct {
 
 // New creates a new API server
 func New(cfg config.Config, keyLoader *loaders.FSKeyLoader) *Server {
-	c := cache.New(cfg.CacheExpiration.AsDuration(), cfg.CacheExpiration.AsDuration()/10)
+	c := cache.New(cfg.CacheExpiration.AsDuration(), cfg.CacheExpiration.AsDuration())
 	return &Server{
 		cfg:       cfg,
 		keyLoader: keyLoader,
@@ -175,12 +174,12 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 		}
 		s.cache.Set(sessionID.String(), authReq, cache.DefaultExpiration)
 		qrCode := getAuthReqQRCode(authReq)
-		shortURL, err := s.qrStore.Save(s.cfg.Host, qrCode)
+		qrID, err := s.qrStore.Save(qrCode)
 		if err != nil {
 			return SignIn500JSONResponse{N500JSONResponse{Message: fmt.Sprintf("failed to cache QR code: %s", err.Error())}}, nil
 		}
 		return SignIn200JSONResponse{
-			QrCode:    shortURL,
+			QrCode:    fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", s.cfg.Host, "/qr-store", qrID.String()),
 			SessionID: sessionID,
 		}, nil
 	case "credentialAtomicQuerySigV2OnChain", "credentialAtomicQueryMTPV2OnChain", "credentialAtomicQueryV3OnChain-beta.0":
@@ -191,12 +190,12 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 		}
 		s.cache.Set(sessionID.String(), invokeReq, cache.DefaultExpiration)
 		qrCode := getInvokeContractQRCode(invokeReq)
-		shortURL, err := s.qrStore.Save(s.cfg.Host, qrCode)
+		qrID, err := s.qrStore.Save(qrCode)
 		if err != nil {
 			return SignIn500JSONResponse{N500JSONResponse{Message: fmt.Sprintf("failed to cache QR code: %s", err.Error())}}, nil
 		}
 		return SignIn200JSONResponse{
-			QrCode:    shortURL,
+			QrCode:    fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", s.cfg.Host, "/qr-store", qrID.String()),
 			SessionID: sessionID,
 		}, nil
 	default:
