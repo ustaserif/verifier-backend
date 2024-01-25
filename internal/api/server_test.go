@@ -267,35 +267,33 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryV3-beta.0",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
 									},
-									Params: common.ToPointer(map[string]interface{}{
-										"nullifierSessionID": big.NewInt(100).String(),
-									}),
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
+								Params: common.ToPointer(map[string]interface{}{
+									"nullifierSessionID": big.NewInt(100).String(),
+								}),
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
