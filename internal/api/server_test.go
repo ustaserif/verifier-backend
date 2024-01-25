@@ -19,8 +19,9 @@ func TestSignIn(t *testing.T) {
 	server := New(cfg, keysLoader)
 
 	type expected struct {
-		httpCode int
-		SignInResponseObject
+		httpCode     int
+		QRCode       QRCode
+		ErrorMessage string
 	}
 
 	type testConfig struct {
@@ -55,31 +56,29 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQuerySigV2",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type": "KYCAgeCredential",
 									},
+									"type": "KYCAgeCredential",
 								},
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -109,31 +108,29 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQuerySigV2",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type": "KYCAgeCredential",
 									},
+									"type": "KYCAgeCredential",
 								},
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   common.ToPointer("did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci"),
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   common.ToPointer("did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci"),
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -162,31 +159,29 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryMTPV2",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryMTPV2",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type": "KYCAgeCredential",
 									},
+									"type": "KYCAgeCredential",
 								},
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -216,32 +211,30 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryV3-beta.0",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
 									},
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -274,35 +267,33 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryV3-beta.0",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
 									},
-									Params: common.ToPointer(map[string]interface{}{
-										"nullifierSessionID": big.NewInt(100).String(),
-									}),
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
+								Params: common.ToPointer(map[string]interface{}{
+									"nullifierSessionID": big.NewInt(100).String(),
+								}),
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -346,12 +337,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field scope id must be unique, got 1 multiple times",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field scope id must be unique, got 1 multiple times",
 			},
 		},
 		{
@@ -395,47 +382,45 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryV3-beta.0",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
 									},
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
-								{
-									CircuitId: "credentialAtomicQueryV3-beta.0",
-									Id:        2,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
-										"credentialSubject": map[string]interface{}{
-											"position": map[string]interface{}{
-												"$eq": float64(1),
-											},
+							},
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        2,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
+									"credentialSubject": map[string]interface{}{
+										"position": map[string]interface{}{
+											"$eq": float64(1),
 										},
-										"type":      "TestInteger01",
-										"proofType": "BJJSignature2021",
 									},
+									"type":      "TestInteger01",
+									"proofType": "BJJSignature2021",
 								},
 							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/authorization/1.0/request",
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
 				},
 			},
 		},
@@ -471,36 +456,34 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQueryV3OnChain-beta.0",
-									Id:        3,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{},
-										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3OnChain-beta.0",
+								Id:        3,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{},
 									},
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
 							},
-							TransactionData: &TransactionDataResponse{
-								ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
-								MethodId:        "b68967e2",
-								ChainId:         80001,
-								Network:         mumbaiNetwork,
-							},
 						},
-						From: cfg.MumbaiSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
+						TransactionData: &TransactionDataResponse{
+							ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
+							MethodId:        "b68967e2",
+							ChainId:         80001,
+							Network:         mumbaiNetwork,
+						},
 					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
 				},
 			},
 		},
@@ -544,12 +527,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field circuitId value is wrong, got credentialAtomicQuerySigV2OnChain, expected credentialAtomicQuerySigV2 or credentialAtomicQueryMTPV2 or credentialAtomicQueryV3-beta.0",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field circuitId value is wrong, got credentialAtomicQuerySigV2OnChain, expected credentialAtomicQuerySigV2 or credentialAtomicQueryMTPV2 or credentialAtomicQueryV3-beta.0",
 			},
 		},
 		{
@@ -592,12 +571,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field circuitId value is wrong, got credentialAtomicQueryV3-beta.0, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain or credentialAtomicQueryV3OnChain-beta.0",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field circuitId value is wrong, got credentialAtomicQueryV3-beta.0, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain or credentialAtomicQueryV3OnChain-beta.0",
 			},
 		},
 		{
@@ -628,12 +603,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "nullifierSessionID is not a valid big integer",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "nullifierSessionID is not a valid big integer",
 			},
 		},
 		{
@@ -660,12 +631,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field chainId value is wrong, got invalid, expected 80001 or 137",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field chainId value is wrong, got invalid, expected 80001 or 137",
 			},
 		},
 		{
@@ -692,12 +659,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "invalid circuitID",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "invalid circuitID",
 			},
 		},
 		{
@@ -724,12 +687,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "context cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "context cannot be empty",
 			},
 		},
 		{
@@ -757,12 +716,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "context cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "context cannot be empty",
 			},
 		},
 		{
@@ -789,12 +744,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "type cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "type cannot be empty",
 			},
 		},
 		{
@@ -822,12 +773,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field transactionData is empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field transactionData is empty",
 			},
 		},
 		{
@@ -859,12 +806,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "field contractAddress is empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "field contractAddress is empty",
 			},
 		},
 		{
@@ -899,32 +842,30 @@ func TestSignIn(t *testing.T) {
 			},
 			expected: expected{
 				httpCode: http.StatusOK,
-				SignInResponseObject: SignIn200JSONResponse{
-					QrCode: QRCode{
-						Body: Body{
-							Scope: []Scope{
-								{
-									CircuitId: "credentialAtomicQuerySigV2OnChain",
-									Id:        1,
-									Query: map[string]interface{}{
-										"allowedIssuers": []interface{}{"*"},
-										"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-										"credentialSubject": map[string]interface{}{
-											"birthday": map[string]interface{}{
-												"$eq": float64(19960424),
-											},
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQuerySigV2OnChain",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": float64(19960424),
 										},
-										"type":      "KYCAgeCredential",
-										"proofType": "BJJSignature2021",
 									},
+									"type":      "KYCAgeCredential",
+									"proofType": "BJJSignature2021",
 								},
 							},
 						},
-						From: cfg.MainSenderDID,
-						To:   nil,
-						Typ:  "application/iden3comm-plain-json",
-						Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
 					},
+					From: cfg.MainSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
 				},
 			},
 		},
@@ -953,12 +894,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "type cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "type cannot be empty",
 			},
 		},
 		{
@@ -986,12 +923,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "type cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "type cannot be empty",
 			},
 		},
 		{
@@ -1018,12 +951,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "allowedIssuers cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "allowedIssuers cannot be empty",
 			},
 		},
 		{
@@ -1046,12 +975,8 @@ func TestSignIn(t *testing.T) {
 				},
 			},
 			expected: expected{
-				httpCode: http.StatusBadRequest,
-				SignInResponseObject: SignIn400JSONResponse{
-					N400JSONResponse{
-						Message: "credentialSubject cannot be empty",
-					},
-				},
+				httpCode:     http.StatusBadRequest,
+				ErrorMessage: "credentialSubject cannot be empty",
 			},
 		},
 	} {
@@ -1062,36 +987,47 @@ func TestSignIn(t *testing.T) {
 			case http.StatusOK:
 				response, ok := rr.(SignIn200JSONResponse)
 				require.True(t, ok)
-				expected, ok := tc.expected.SignInResponseObject.(SignIn200JSONResponse)
+				expected := tc.expected.QRCode
+				require.NotNil(t, expected.Body.Scope)
+
+				id := isValidaQrStoreCallback(t, response.QrCode)
+
+				rr2, err := server.GetQRCodeFromStore(ctx,
+					GetQRCodeFromStoreRequestObject{
+						Params: GetQRCodeFromStoreParams{Id: id},
+					})
+				require.NoError(t, err)
+				got, ok := rr2.(GetQRCodeFromStore200JSONResponse)
 				require.True(t, ok)
-				require.NotNil(t, expected.QrCode.Body.Scope)
-				require.Len(t, expected.QrCode.Body.Scope, len(response.QrCode.Body.Scope))
-				require.Equal(t, expected.QrCode.Body.Scope, response.QrCode.Body.Scope)
-				if expected.QrCode.Body.Scope[0].CircuitId == "credentialAtomicQuerySigV2" || expected.QrCode.Body.Scope[0].CircuitId == "credentialAtomicQueryMTPV2" || expected.QrCode.Body.Scope[0].CircuitId == "credentialAtomicQueryV3-beta.0" {
-					require.NotNil(t, response.QrCode.Body.CallbackUrl)
-					assert.True(t, isValidCallBack(t, *response.QrCode.Body.CallbackUrl))
-					if expected.QrCode.Body.Scope[0].Params != nil {
-						assert.Equal(t, expected.QrCode.Body.Scope[0].Params, response.QrCode.Body.Scope[0].Params)
+
+				require.Len(t, expected.Body.Scope, len(got.Body.Scope))
+				require.Equal(t, expected.Body.Scope, got.Body.Scope)
+
+				if expected.Body.Scope[0].CircuitId == "credentialAtomicQuerySigV2" ||
+					expected.Body.Scope[0].CircuitId == "credentialAtomicQueryMTPV2" ||
+					expected.Body.Scope[0].CircuitId == "credentialAtomicQueryV3-beta.0" {
+					require.NotNil(t, got.Body.CallbackUrl)
+					assert.True(t, isValidCallBack(t, *got.Body.CallbackUrl))
+					if expected.Body.Scope[0].Params != nil {
+						assert.Equal(t, expected.Body.Scope[0].Params, got.Body.Scope[0].Params)
 					}
 				}
-				assert.Equal(t, expected.QrCode.From, response.QrCode.From)
-				assert.Equal(t, expected.QrCode.Typ, response.QrCode.Typ)
-				assert.Equal(t, expected.QrCode.Type, response.QrCode.Type)
-				assert.Equal(t, expected.QrCode.To, response.QrCode.To)
+				assert.Equal(t, expected.From, got.From)
+				assert.Equal(t, expected.Typ, got.Typ)
+				assert.Equal(t, expected.Type, got.Type)
+				assert.Equal(t, expected.To, got.To)
 
-				if expected.QrCode.Body.TransactionData != nil {
-					assert.Equal(t, expected.QrCode.Body.TransactionData.ChainId, response.QrCode.Body.TransactionData.ChainId)
-					assert.Equal(t, expected.QrCode.Body.TransactionData.ContractAddress, response.QrCode.Body.TransactionData.ContractAddress)
-					assert.Equal(t, expected.QrCode.Body.TransactionData.MethodId, response.QrCode.Body.TransactionData.MethodId)
-					assert.Equal(t, expected.QrCode.Body.TransactionData.Network, response.QrCode.Body.TransactionData.Network)
+				if expected.Body.TransactionData != nil {
+					assert.Equal(t, expected.Body.TransactionData.ChainId, got.Body.TransactionData.ChainId)
+					assert.Equal(t, expected.Body.TransactionData.ContractAddress, got.Body.TransactionData.ContractAddress)
+					assert.Equal(t, expected.Body.TransactionData.MethodId, got.Body.TransactionData.MethodId)
+					assert.Equal(t, expected.Body.TransactionData.Network, got.Body.TransactionData.Network)
 				}
 
 			case http.StatusBadRequest:
 				response, ok := rr.(SignIn400JSONResponse)
 				require.True(t, ok)
-				expected, ok := tc.expected.SignInResponseObject.(SignIn400JSONResponse)
-				require.True(t, ok)
-				assert.Equal(t, expected.Message, response.Message)
+				assert.Equal(t, tc.expected.ErrorMessage, response.Message)
 			default:
 				t.Errorf("unexpected http code: %d", tc.expected.httpCode)
 			}
@@ -1099,300 +1035,21 @@ func TestSignIn(t *testing.T) {
 	}
 }
 
-func TestQRStore(t *testing.T) {
-	ctx := context.Background()
-	server := New(cfg, keysLoader)
-
-	type expected struct {
-		httpCode int
-		QRStoreResponseObject
-	}
-
-	type testConfig struct {
-		name     string
-		body     QRStoreRequestObject
-		expected expected
-	}
-
-	for _, tc := range []testConfig{
-		{
-			name: "valid request",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusOK,
-			},
-		},
-		{
-			name: "invalid request missing from field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing type field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing thid field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing id field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing body field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing body field 2",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing scope field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing reason field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "did:polygonid:polygon:mumbai:2qH7TstpRRJHXNN4o49Fu9H2Qismku8hQeUxDVrjqT",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-		{
-			name: "invalid request missing typ field",
-			body: QRStoreRequestObject{
-				Body: &QRStoreJSONRequestBody{
-					From: "",
-					To:   common.ToPointer(""),
-					Typ:  "application/iden3comm-plain-json",
-					Type: "https://iden3-communication.io/authorization/1.0/request",
-					Thid: "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Id:   "7f38a193-0918-4a48-9fac-36adfdb8b542",
-					Body: Body{
-						CallbackUrl: common.ToPointer("http://localhost:3000/callback?n=1"),
-						Reason:      "reason",
-						Scope: []Scope{
-							{
-								CircuitId: "credentialAtomicQuerySigV2",
-								Id:        1,
-								Query:     map[string]interface{}{},
-							},
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode: http.StatusBadRequest,
-			},
-		},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			rr, err := server.QRStore(ctx, tc.body)
-			require.NoError(t, err)
-			switch tc.expected.httpCode {
-			case http.StatusOK:
-				response, ok := rr.(QRStore200JSONResponse)
-				require.True(t, ok)
-				assert.True(t, isValidaQrStoreCallback(t, string(response)))
-			case http.StatusBadRequest:
-				_, ok := rr.(QRStore400JSONResponse)
-				require.True(t, ok)
-			default:
-				t.Errorf("unexpected http code: %d", tc.expected.httpCode)
-			}
-		})
-	}
-}
-
-func isValidaQrStoreCallback(t *testing.T, url string) bool {
+func isValidaQrStoreCallback(t *testing.T, url string) uuid.UUID {
+	t.Helper()
 	callBackURL := url
 	items := strings.Split(callBackURL, "/qr-store?")
-	if len(items) != 2 {
-		return false
-	}
-	if items[0] != "iden3comm://?request_uri="+cfg.Host {
-		return false
-	}
+	require.Len(t, items, 2)
+
+	require.Equal(t, "iden3comm://?request_uri="+cfg.Host, items[0])
 
 	queryItems := strings.Split(items[1], "=")
-	if len(queryItems) != 2 {
-		return false
-	}
+	require.Len(t, queryItems, 2)
 
-	_, err := uuid.Parse(queryItems[1])
+	id, err := uuid.Parse(queryItems[1])
 	require.NoError(t, err)
-	return true
+
+	return id
 }
 
 func isValidCallBack(t *testing.T, url string) bool {
