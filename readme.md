@@ -14,9 +14,15 @@ make stop     # stop the server
 make restart  # stop and remove the container, build the image and run the container
 ```
 
+### Cache expiration
+The default cache expiration is 1 hour. This can be changed by setting the environment variable `VERIFIER_BACKEND_CACHE_EXPIRATION` to the desired value.
+For instance, to set the cache expiration to 30 minutes, you can run the following command:
+```shell
+VERIFIER_BACKEND_CACHE_EXPIRATION=30m
+```
 
 
-#### /sign-in body example:
+#### sign-in body example - credentialAtomicQuerySigV2:
 
 ```json
 {
@@ -36,7 +42,7 @@ make restart  # stop and remove the container, build the image and run the conta
 }
 ```
 
-#### /sign-in payload response sample:
+#### sign-in payload response sample:
 
 ```json
 {
@@ -68,5 +74,72 @@ make restart  # stop and remove the container, build the image and run the conta
         "type": "https://iden3-communication.io/authorization/1.0/request"
     },
     "sessionID": 63622
+}
+```
+
+### More Samples
+
+#### sign-in body example - credentialAtomicQueryMTPV2:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryMTPV2",
+  "skipClaimRevocationCheck": false, 
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+        "birthday": {
+            "$eq": 19960424
+        }
+    }
+  }
+}
+```
+
+> Note: `credentialAtomicQueryV3-beta.0` is the same circuit for BJJSignature2021 and Iden3SparseMerkleTreeProof. 
+> You must to specify the proofType in the query. 
+
+#### sign-in body example - credentialAtomicQueryV3-beta.0 - BJJSignature2021:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "skipClaimRevocationCheck": false,
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+      "birthday": {
+        "$eq": 19960424
+      }
+    },
+    "proofType": "BJJSignature2021"
+  }
+}
+```
+
+#### sign-in body example - credentialAtomicQueryV3-beta.0 - Iden3SparseMerkleTreeProof:
+
+```json
+{
+  "chainID": "80001",
+  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "skipClaimRevocationCheck": false,
+  "query": {
+    "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
+    "allowedIssuers": ["*"],
+    "type": "KYCAgeCredential",
+    "credentialSubject": {
+      "birthday": {
+        "$eq": 19960424
+      }
+    },
+    "proofType": "Iden3SparseMerkleTreeProof"
+  }
 }
 ```
