@@ -16,6 +16,16 @@ import (
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
 )
 
+// Body defines model for Body.
+type Body struct {
+	CallbackUrl *string `json:"callbackUrl,omitempty"`
+	Reason      string  `json:"reason"`
+	Scope       []Scope `json:"scope"`
+
+	// TransactionData Only required when using on-chain verification
+	TransactionData *TransactionDataResponse `json:"transaction_data,omitempty"`
+}
+
 // CallbackResponse defines model for CallbackResponse.
 type CallbackResponse = map[string]interface{}
 
@@ -27,13 +37,22 @@ type GenericErrorMessage struct {
 // Health defines model for Health.
 type Health = map[string]interface{}
 
+// JWZMetadata defines model for JWZMetadata.
+type JWZMetadata struct {
+	Nullifiers *[]JWZProofs `json:"nullifiers"`
+	UserDID    string       `json:"userDID"`
+}
+
+// JWZProofs defines model for JWZProofs.
+type JWZProofs struct {
+	Nullifier          string `json:"nullifier"`
+	NullifierSessionID string `json:"nullifierSessionID"`
+	ScopeID            uint32 `json:"scopeID"`
+}
+
 // QRCode defines model for QRCode.
 type QRCode struct {
-	Body struct {
-		CallbackUrl *string  `json:"callbackUrl,omitempty"`
-		Reason      *string  `json:"reason,omitempty"`
-		Scope       *[]Scope `json:"scope,omitempty"`
-	} `json:"body"`
+	Body Body    `json:"body"`
 	From string  `json:"from"`
 	Id   string  `json:"id"`
 	Thid string  `json:"thid"`
@@ -42,46 +61,87 @@ type QRCode struct {
 	Type string  `json:"type"`
 }
 
-// QRStoreRequest defines model for QRStoreRequest.
-type QRStoreRequest = QRCode
-
-// QRStoreResponse defines model for QRStoreResponse.
-type QRStoreResponse = string
-
 // Query defines model for Query.
 type Query = map[string]interface{}
 
 // Scope defines model for Scope.
 type Scope struct {
-	CircuitId string `json:"circuitId"`
-	Id        int    `json:"id"`
-	Query     Query  `json:"query"`
+	CircuitId string       `json:"circuitId"`
+	Id        uint32       `json:"id"`
+	Params    *ScopeParams `json:"params,omitempty"`
+	Query     Query        `json:"query"`
+}
+
+// ScopeParams defines model for ScopeParams.
+type ScopeParams = map[string]interface{}
+
+// ScopeRequest defines model for ScopeRequest.
+type ScopeRequest struct {
+	CircuitId string       `json:"circuitId"`
+	Id        uint32       `json:"id"`
+	Params    *ScopeParams `json:"params,omitempty"`
+	Query     Query        `json:"query"`
+
+	// TransactionData Only required when using on-chain verification
+	TransactionData *TransactionData `json:"transactionData,omitempty"`
 }
 
 // SignInRequest defines model for SignInRequest.
 type SignInRequest struct {
-	ChainID   string  `json:"chainID"`
-	CircuitID string  `json:"circuitID"`
-	Query     Query   `json:"query"`
-	To        *string `json:"to,omitempty"`
+	// ChainID Only required when using off-chain verification
+	// `80001`: `mumbai`
+	// `137` : `mainnet`
+	ChainID *string        `json:"chainID,omitempty"`
+	Reason  *string        `json:"reason,omitempty"`
+	Scope   []ScopeRequest `json:"scope"`
+	To      *string        `json:"to,omitempty"`
+
+	// TransactionData Only required when using on-chain verification
+	TransactionData *TransactionData `json:"transactionData,omitempty"`
 }
 
 // SingInResponse defines model for SingInResponse.
 type SingInResponse struct {
-	QrCode    QRCode `json:"qrCode"`
-	SessionID int    `json:"sessionID"`
+	QrCode    string `json:"qrCode"`
+	SessionID UUID   `json:"sessionID"`
 }
 
 // StatusResponse defines model for StatusResponse.
 type StatusResponse struct {
-	Jwz string `json:"jwz"`
+	Jwz         *string      `json:"jwz"`
+	JwzMetadata *JWZMetadata `json:"jwzMetadata,omitempty"`
+
+	// Message error message
+	Message *string `json:"message"`
+
+	// Status pending, success, error
+	Status string `json:"status"`
 }
+
+// TransactionData Only required when using on-chain verification
+type TransactionData struct {
+	ChainID         int    `json:"chainID"`
+	ContractAddress string `json:"contractAddress"`
+	MethodID        string `json:"methodID"`
+	Network         string `json:"network"`
+}
+
+// TransactionDataResponse Only required when using on-chain verification
+type TransactionDataResponse struct {
+	ChainId         int    `json:"chain_id"`
+	ContractAddress string `json:"contract_address"`
+	MethodId        string `json:"method_id"`
+	Network         string `json:"network"`
+}
+
+// UUID defines model for UUID.
+type UUID = uuid.UUID
 
 // Id defines model for id.
 type Id = uuid.UUID
 
 // SessionID defines model for sessionID.
-type SessionID = string
+type SessionID = uuid.UUID
 
 // N400 defines model for 400.
 type N400 = GenericErrorMessage
@@ -97,7 +157,7 @@ type CallbackTextBody = string
 
 // CallbackParams defines parameters for Callback.
 type CallbackParams struct {
-	// SessionID Session ID e.g: 123456
+	// SessionID ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
 	SessionID SessionID `form:"sessionID" json:"sessionID"`
 }
 
@@ -109,15 +169,12 @@ type GetQRCodeFromStoreParams struct {
 
 // StatusParams defines parameters for Status.
 type StatusParams struct {
-	// SessionID Session ID e.g: 123456
+	// SessionID ID e.g: 89d298fa-15a6-4a1d-ab13-d1069467eedd
 	SessionID SessionID `form:"sessionID" json:"sessionID"`
 }
 
 // CallbackTextRequestBody defines body for Callback for text/plain ContentType.
 type CallbackTextRequestBody = CallbackTextBody
-
-// QRStoreJSONRequestBody defines body for QRStore for application/json ContentType.
-type QRStoreJSONRequestBody = QRStoreRequest
 
 // SignInJSONRequestBody defines body for SignIn for application/json ContentType.
 type SignInJSONRequestBody = SignInRequest
@@ -136,9 +193,6 @@ type ServerInterface interface {
 	// Get QRCode from store
 	// (GET /qr-store)
 	GetQRCodeFromStore(w http.ResponseWriter, r *http.Request, params GetQRCodeFromStoreParams)
-	// Store QRCode
-	// (POST /qr-store)
-	QRStore(w http.ResponseWriter, r *http.Request)
 	// Sign in
 	// (POST /sign-in)
 	SignIn(w http.ResponseWriter, r *http.Request)
@@ -172,12 +226,6 @@ func (_ Unimplemented) Health(w http.ResponseWriter, r *http.Request) {
 // Get QRCode from store
 // (GET /qr-store)
 func (_ Unimplemented) GetQRCodeFromStore(w http.ResponseWriter, r *http.Request, params GetQRCodeFromStoreParams) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Store QRCode
-// (POST /qr-store)
-func (_ Unimplemented) QRStore(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -293,21 +341,6 @@ func (siw *ServerInterfaceWrapper) GetQRCodeFromStore(w http.ResponseWriter, r *
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetQRCodeFromStore(w, r, params)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// QRStore operation middleware
-func (siw *ServerInterfaceWrapper) QRStore(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.QRStore(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -493,9 +526,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/qr-store", wrapper.GetQRCodeFromStore)
 	})
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/qr-store", wrapper.QRStore)
-	})
-	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/sign-in", wrapper.SignIn)
 	})
 	r.Group(func(r chi.Router) {
@@ -622,32 +652,6 @@ func (response GetQRCodeFromStore500JSONResponse) VisitGetQRCodeFromStoreRespons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type QRStoreRequestObject struct {
-	Body *QRStoreJSONRequestBody
-}
-
-type QRStoreResponseObject interface {
-	VisitQRStoreResponse(w http.ResponseWriter) error
-}
-
-type QRStore200JSONResponse QRStoreResponse
-
-func (response QRStore200JSONResponse) VisitQRStoreResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type QRStore500JSONResponse struct{ N500JSONResponse }
-
-func (response QRStore500JSONResponse) VisitQRStoreResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
 type SignInRequestObject struct {
 	Body *SignInJSONRequestBody
 }
@@ -732,9 +736,6 @@ type StrictServerInterface interface {
 	// Get QRCode from store
 	// (GET /qr-store)
 	GetQRCodeFromStore(ctx context.Context, request GetQRCodeFromStoreRequestObject) (GetQRCodeFromStoreResponseObject, error)
-	// Store QRCode
-	// (POST /qr-store)
-	QRStore(ctx context.Context, request QRStoreRequestObject) (QRStoreResponseObject, error)
 	// Sign in
 	// (POST /sign-in)
 	SignIn(ctx context.Context, request SignInRequestObject) (SignInResponseObject, error)
@@ -873,37 +874,6 @@ func (sh *strictHandler) GetQRCodeFromStore(w http.ResponseWriter, r *http.Reque
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetQRCodeFromStoreResponseObject); ok {
 		if err := validResponse.VisitGetQRCodeFromStoreResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// QRStore operation middleware
-func (sh *strictHandler) QRStore(w http.ResponseWriter, r *http.Request) {
-	var request QRStoreRequestObject
-
-	var body QRStoreJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.QRStore(ctx, request.(QRStoreRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "QRStore")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(QRStoreResponseObject); ok {
-		if err := validResponse.VisitQRStoreResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
