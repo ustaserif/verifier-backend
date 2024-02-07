@@ -870,6 +870,51 @@ func TestSignIn(t *testing.T) {
 			},
 		},
 		{
+			name: "valid proof of credential ownership",
+			body: SignInRequestObject{
+				Body: &SignInJSONRequestBody{
+					ChainID: common.ToPointer("80001"),
+					Scope: []ScopeRequest{
+						{
+							Id:        1,
+							CircuitId: "credentialAtomicQueryV3-beta.0",
+							Query: jsonToMap(t, `{
+                            "context": "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
+                            "allowedIssuers": [
+                              "*"
+                            ],
+                            "type": "TestInteger01",
+							"proofType": "BJJSignature2021"
+                          }`),
+						},
+					},
+				},
+			},
+			expected: expected{
+				httpCode: http.StatusOK,
+				QRCode: QRCode{
+					Body: Body{
+						Scope: []Scope{
+							{
+								CircuitId: "credentialAtomicQueryV3-beta.0",
+								Id:        1,
+								Query: map[string]interface{}{
+									"allowedIssuers": []interface{}{"*"},
+									"context":        "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
+									"type":           "TestInteger01",
+									"proofType":      "BJJSignature2021",
+								},
+							},
+						},
+					},
+					From: cfg.MumbaiSenderDID,
+					To:   nil,
+					Typ:  "application/iden3comm-plain-json",
+					Type: "https://iden3-communication.io/authorization/1.0/request",
+				},
+			},
+		},
+		{
 			name: "invalid request - invalid query onchain - empty type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
@@ -953,30 +998,6 @@ func TestSignIn(t *testing.T) {
 			expected: expected{
 				httpCode:     http.StatusBadRequest,
 				ErrorMessage: "allowedIssuers cannot be empty",
-			},
-		},
-		{
-			name: "invalid request - invalid query - no credentialSubject",
-			body: SignInRequestObject{
-				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
-					Scope: []ScopeRequest{
-						{
-							Id:        1,
-							CircuitId: "credentialAtomicQuerySigV2",
-							Query: jsonToMap(t, `{
-							"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-							"allowedIssuers": ["*"],
-							"type": "KYCAgeCredential",
-							"proofType": "BJJSignature2021"
-						  }`),
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode:     http.StatusBadRequest,
-				ErrorMessage: "credentialSubject cannot be empty",
 			},
 		},
 	} {
