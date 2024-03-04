@@ -99,15 +99,15 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
 }
 ```
 
-> Note: `credentialAtomicQueryV3-beta.0` is the same circuit for BJJSignature2021 and Iden3SparseMerkleTreeProof. 
+> Note: `credentialAtomicQueryV3-beta.1` is the same circuit for BJJSignature2021 and Iden3SparseMerkleTreeProof. 
 > You must to specify the proofType in the query. 
 
-#### sign-in body example - credentialAtomicQueryV3-beta.0 - BJJSignature2021:
+#### sign-in body example - credentialAtomicQueryV3-beta.1- BJJSignature2021:
 
 ```json
 {
   "chainID": "80001",
-  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "circuitID": "credentialAtomicQueryV3-beta.1",
   "skipClaimRevocationCheck": false,
   "query": {
     "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
@@ -123,12 +123,12 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
 }
 ```
 
-#### sign-in body example - credentialAtomicQueryV3-beta.0 - Iden3SparseMerkleTreeProof:
+#### sign-in body example - credentialAtomicQueryV3-beta.1- Iden3SparseMerkleTreeProof:
 
 ```json
 {
   "chainID": "80001",
-  "circuitID": "credentialAtomicQueryV3-beta.0",
+  "circuitID": "credentialAtomicQueryV3-beta.1",
   "skipClaimRevocationCheck": false,
   "query": {
     "context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",

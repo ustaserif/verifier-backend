@@ -397,8 +397,12 @@ github.com/iden3/contracts-abi/state/go/abi v1.0.1 h1:FsaLJSy3NSyJl5k1yfDxc5DhUH
 github.com/iden3/contracts-abi/state/go/abi v1.0.1/go.mod h1:TxgIrXCvxms3sbOdsy8kTvffUCIpEEifNy0fSXdkU4w=
 github.com/iden3/go-circuits/v2 v2.0.1 h1:tcJtBE8aLJsf9qpBoTUKE143Mne025cunQnSExMXaKo=
 github.com/iden3/go-circuits/v2 v2.0.1/go.mod h1:VIFIp51+IH0hOzjnKhb84bCeyq7hq76zX/C14ua6zh4=
+github.com/iden3/go-circuits/v2 v2.1.0 h1:Dk+noXGXOJYFjj2iWu3KLPd/KLoIhZ3eT6qYEfKyocc=
+github.com/iden3/go-circuits/v2 v2.1.0/go.mod h1:VIFIp51+IH0hOzjnKhb84bCeyq7hq76zX/C14ua6zh4=
 github.com/iden3/go-iden3-auth/v2 v2.1.0 h1:e+oRhPyJ14dbwDjAnYrp1O+PvtzzzhOLxLqFnqkoekE=
 github.com/iden3/go-iden3-auth/v2 v2.1.0/go.mod h1:KpKzSa5ANat+mSMTUzBZwQZ5NTI6w8Q4L0yVxQdnyVc=
+github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63 h1:H7YOtCz0/xkf55/UmlonlDwSx5RqyIH1QnUNd0Cn7jI=
+github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63/go.mod h1:5+Nug6uN7yrru9Wc7CWAzo4HEshmM0+IeWv7zBxpDJo=
 github.com/iden3/go-iden3-core/v2 v2.0.3 h1:ce9Jbw10zDsinWXFc05SiK2Hof/wu4zV4/ai5gQy29k=
 github.com/iden3/go-iden3-core/v2 v2.0.3/go.mod h1:L9PxhWPvoS9qTb3inEkZBm1RpjHBt+VTwvxssdzbAdw=
 github.com/iden3/go-iden3-crypto v0.0.15 h1:4MJYlrot1l31Fzlo2sF56u7EVFeHHJkxGXXZCtESgK4=
@@ -419,6 +423,8 @@ github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230524142950-0986cf057d4e
 github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230524142950-0986cf057d4e/go.mod h1:UEBifEzw62T6VzIHJeHuUgeLg2U/J9ttf7hOwQEqnYk=
 github.com/iden3/go-schema-processor/v2 v2.2.0 h1:sYPqLs72pEWXIfF0/MOv9AFm3+IGutRM3yClWRrjheg=
 github.com/iden3/go-schema-processor/v2 v2.2.0/go.mod h1:Ovsrk0839NZgHtoW4hVLAmHoOsHAQZuVNUXd7sIOkLQ=
+github.com/iden3/go-schema-processor/v2 v2.3.1 h1:cjsfUZNgyPoHQDEES4vuVod948QC9l35QkoEIat0ghc=
+github.com/iden3/go-schema-processor/v2 v2.3.1/go.mod h1:BcHVDZyn8q8vUlL+XpOo7hpwXmEjxzO8ao1LkvFsM+k=
 github.com/iden3/iden3comm/v2 v2.1.0 h1:op2X3y/H9khizcdoYKf3iRAQFt/l5dsip47sJu1kv7Q=
 github.com/iden3/iden3comm/v2 v2.1.0/go.mod h1:G+ufR/M28O3PKMVrkUqCuoYfjiEkGFWvf8oF2BmFC6c=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
