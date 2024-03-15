@@ -450,7 +450,7 @@ func TestSignIn(t *testing.T) {
 						},
 					},
 					TransactionData: &TransactionData{
-						ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
+						ContractAddress: "0x36eB0E70a456c310D8d8d15ae01F6D5A7C15309A",
 						MethodID:        "b68967e2",
 						ChainID:         80001,
 						Network:         mumbaiNetwork,
@@ -477,13 +477,13 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 						TransactionData: &TransactionDataResponse{
-							ContractAddress: "0xD0Fd3E9fDF448e5B86Cc0f73E5Ee7D2F284884c0",
+							ContractAddress: "0x36eB0E70a456c310D8d8d15ae01F6D5A7C15309A",
 							MethodId:        "b68967e2",
 							ChainId:         80001,
 							Network:         mumbaiNetwork,
 						},
 					},
-					From: cfg.MumbaiSenderDID,
+					From: "did:polygonid:polygon:mumbai:2qCU58EJgrELdThzMyykDwT5kWff6XSbpSWtTQ7oS8",
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
@@ -818,8 +818,8 @@ func TestSignIn(t *testing.T) {
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
 					TransactionData: &TransactionData{
-						ChainID:         1234,
-						ContractAddress: "0xE826f870852D7eeeB79B2C030298f9B5DAA8C8a3",
+						ChainID:         80001,
+						ContractAddress: "0x3a4d4E47bFfF6bD0EF3cd46580D9e36F3367da03",
 						MethodID:        "123",
 						Network:         mumbaiNetwork,
 					},
@@ -865,7 +865,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: cfg.MainSenderDID,
+					From: "did:polygonid:polygon:mumbai:2qCU58EJgrELeNyUdGokyCKT8tUygKreYkuLFMbnxq",
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",

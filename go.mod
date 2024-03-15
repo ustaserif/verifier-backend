@@ -122,7 +122,7 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/iden3/contracts-abi/state/go/abi v1.0.1 // indirect
-	github.com/iden3/go-iden3-core/v2 v2.0.3 // indirect
+	github.com/iden3/go-iden3-core/v2 v2.0.4 // indirect
 	github.com/iden3/go-iden3-crypto v0.0.15 // indirect
 	github.com/iden3/go-jwz/v2 v2.0.1 // indirect
 	github.com/iden3/go-merkletree-sql/v2 v2.0.6 // indirect

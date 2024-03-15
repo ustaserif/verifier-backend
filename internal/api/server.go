@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	common2 "github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/iden3/go-circuits/v2"
@@ -18,6 +19,8 @@ import (
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	"github.com/iden3/go-iden3-auth/v2/pubsignals"
 	"github.com/iden3/go-iden3-auth/v2/state"
+	core "github.com/iden3/go-iden3-core/v2"
+	"github.com/iden3/go-iden3-core/v2/w3c"
 	"github.com/iden3/iden3comm/v2/protocol"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
@@ -506,11 +509,41 @@ func getContractInvokeRequestOnChain(req SignInRequestObject, cfg config.Config)
 	authReq.ID = id
 	authReq.ThreadID = id
 	authReq.To = ""
+
+	verifierDID, err := buildOnchainVerifierDID(transactionData)
+	if err != nil {
+		return protocol.ContractInvokeRequestMessage{}, err
+	}
+
+	authReq.From = verifierDID.String()
 	if req.Body.To != nil {
 		authReq.To = *req.Body.To
 	}
 
 	return authReq, nil
+}
+
+func buildOnchainVerifierDID(transactionData protocol.TransactionData) (*w3c.DID, error) {
+	address := common2.HexToAddress(transactionData.ContractAddress)
+	var ethAddr [20]byte
+	copy(ethAddr[:], address.Bytes())
+
+	currentState := core.GenesisFromEthAddress(ethAddr)
+
+	blockchain, network, err := core.NetworkByChainID(core.ChainID(transactionData.ChainID))
+	if err != nil {
+		return nil, err
+	}
+	didType, err := core.BuildDIDType(core.DIDMethodPolygonID, blockchain, network)
+	if err != nil {
+		return nil, err
+	}
+
+	did, err := core.NewDID(didType, currentState)
+	if err != nil {
+		return nil, err
+	}
+	return did, nil
 }
 
 func getParams(params ScopeParams) (map[string]interface{}, error) {
