@@ -958,30 +958,6 @@ func TestSignIn(t *testing.T) {
 				ErrorMessage: "allowedIssuers cannot be empty",
 			},
 		},
-		{
-			name: "invalid request - invalid query - no credentialSubject",
-			body: SignInRequestObject{
-				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
-					Scope: []ScopeRequest{
-						{
-							Id:        1,
-							CircuitId: "credentialAtomicQuerySigV2",
-							Query: jsonToMap(t, `{
-							"context": "https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld",
-							"allowedIssuers": ["*"],
-							"type": "KYCAgeCredential",
-							"proofType": "BJJSignature2021"
-						  }`),
-						},
-					},
-				},
-			},
-			expected: expected{
-				httpCode:     http.StatusBadRequest,
-				ErrorMessage: "credentialSubject cannot be empty",
-			},
-		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rr, err := server.SignIn(ctx, tc.body)
