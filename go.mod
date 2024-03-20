@@ -8,8 +8,9 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/golangci/golangci-lint v1.55.1
 	github.com/google/uuid v1.5.0
-	github.com/iden3/go-iden3-auth/v2 v2.1.0
-	github.com/iden3/go-schema-processor/v2 v2.2.0
+	github.com/iden3/go-circuits/v2 v2.1.0
+	github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63
+	github.com/iden3/go-schema-processor/v2 v2.3.1
 	github.com/iden3/iden3comm/v2 v2.1.0
 	github.com/ipfs/go-ipfs-api v0.7.0
 	github.com/joho/godotenv v1.5.1
@@ -121,8 +122,7 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/iden3/contracts-abi/state/go/abi v1.0.1 // indirect
-	github.com/iden3/go-circuits/v2 v2.0.1 // indirect
-	github.com/iden3/go-iden3-core/v2 v2.0.3 // indirect
+	github.com/iden3/go-iden3-core/v2 v2.0.4 // indirect
 	github.com/iden3/go-iden3-crypto v0.0.15 // indirect
 	github.com/iden3/go-jwz/v2 v2.0.1 // indirect
 	github.com/iden3/go-merkletree-sql/v2 v2.0.6 // indirect
