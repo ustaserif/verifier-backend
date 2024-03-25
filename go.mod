@@ -4,12 +4,14 @@ go 1.20
 
 require (
 	github.com/deepmap/oapi-codegen v1.16.2
+	github.com/ethereum/go-ethereum v1.13.10
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-chi/cors v1.2.1
 	github.com/golangci/golangci-lint v1.55.1
 	github.com/google/uuid v1.5.0
 	github.com/iden3/go-circuits/v2 v2.1.0
-	github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63
+	github.com/iden3/go-iden3-auth/v2 v2.2.1
+	github.com/iden3/go-iden3-core/v2 v2.0.4
 	github.com/iden3/go-schema-processor/v2 v2.3.1
 	github.com/iden3/iden3comm/v2 v2.1.0
 	github.com/ipfs/go-ipfs-api v0.7.0
@@ -75,7 +77,6 @@ require (
 	github.com/dustinxie/ecc v0.0.0-20210511000915-959544187564 // indirect
 	github.com/esimonov/ifshort v1.0.4 // indirect
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
-	github.com/ethereum/go-ethereum v1.13.10 // indirect
 	github.com/ettle/strcase v0.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
@@ -122,7 +123,6 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/iden3/contracts-abi/state/go/abi v1.0.1 // indirect
-	github.com/iden3/go-iden3-core/v2 v2.0.4 // indirect
 	github.com/iden3/go-iden3-crypto v0.0.15 // indirect
 	github.com/iden3/go-jwz/v2 v2.0.1 // indirect
 	github.com/iden3/go-merkletree-sql/v2 v2.0.6 // indirect
