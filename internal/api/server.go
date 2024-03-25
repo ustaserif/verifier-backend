@@ -406,7 +406,6 @@ func validateRequestQuery(offChainRequest bool, scope []ScopeRequest) error {
 		if scope.Query["allowedIssuers"] == nil {
 			return errors.New("allowedIssuers cannot be empty")
 		}
-
 	}
 
 	return nil
