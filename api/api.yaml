@@ -321,7 +321,7 @@ paths:
                       "skipClaimRevocationCheck": false,
                       "scope": [
                         {
-                          "circuitID": "credentialAtomicQueryV3-beta.0",
+                          "circuitID": "credentialAtomicQueryV3-beta.1",
                           "id": 2,
                           "query": {
                             "context": "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",

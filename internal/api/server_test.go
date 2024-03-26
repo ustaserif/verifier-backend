@@ -880,9 +880,14 @@ func TestSignIn(t *testing.T) {
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
-							CircuitId: "credentialAtomicQueryV3-beta.0",
+							CircuitId: "credentialAtomicQueryV3-beta.1",
 							Query: jsonToMap(t, `{
                             "context": "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
+							"credentialSubject": {
+								"birthday": {
+									"$eq": 19960424.0
+								}
+							},
                             "allowedIssuers": [
                               "*"
                             ],
@@ -899,13 +904,18 @@ func TestSignIn(t *testing.T) {
 					Body: Body{
 						Scope: []Scope{
 							{
-								CircuitId: "credentialAtomicQueryV3-beta.0",
+								CircuitId: "credentialAtomicQueryV3-beta.1",
 								Id:        1,
 								Query: map[string]interface{}{
 									"allowedIssuers": []interface{}{"*"},
 									"context":        "ipfs://QmaBJzpoYT2CViDx5ShJiuYLKXizrPEfXo8JqzrXCvG6oc",
-									"type":           "TestInteger01",
-									"proofType":      "BJJSignature2021",
+									"credentialSubject": map[string]interface{}{
+										"birthday": map[string]interface{}{
+											"$eq": 19960424.0,
+										},
+									},
+									"type":      "TestInteger01",
+									"proofType": "BJJSignature2021",
 								},
 							},
 						},

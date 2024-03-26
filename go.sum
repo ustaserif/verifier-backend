@@ -395,16 +395,10 @@ github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/iden3/contracts-abi/state/go/abi v1.0.1 h1:FsaLJSy3NSyJl5k1yfDxc5DhUHRY7Z/UCj0/1YueMrY=
 github.com/iden3/contracts-abi/state/go/abi v1.0.1/go.mod h1:TxgIrXCvxms3sbOdsy8kTvffUCIpEEifNy0fSXdkU4w=
-github.com/iden3/go-circuits/v2 v2.0.1 h1:tcJtBE8aLJsf9qpBoTUKE143Mne025cunQnSExMXaKo=
-github.com/iden3/go-circuits/v2 v2.0.1/go.mod h1:VIFIp51+IH0hOzjnKhb84bCeyq7hq76zX/C14ua6zh4=
 github.com/iden3/go-circuits/v2 v2.1.0 h1:Dk+noXGXOJYFjj2iWu3KLPd/KLoIhZ3eT6qYEfKyocc=
 github.com/iden3/go-circuits/v2 v2.1.0/go.mod h1:VIFIp51+IH0hOzjnKhb84bCeyq7hq76zX/C14ua6zh4=
-github.com/iden3/go-iden3-auth/v2 v2.1.0 h1:e+oRhPyJ14dbwDjAnYrp1O+PvtzzzhOLxLqFnqkoekE=
-github.com/iden3/go-iden3-auth/v2 v2.1.0/go.mod h1:KpKzSa5ANat+mSMTUzBZwQZ5NTI6w8Q4L0yVxQdnyVc=
-github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63 h1:H7YOtCz0/xkf55/UmlonlDwSx5RqyIH1QnUNd0Cn7jI=
-github.com/iden3/go-iden3-auth/v2 v2.1.1-0.20240304132637-e0a1d828eb63/go.mod h1:5+Nug6uN7yrru9Wc7CWAzo4HEshmM0+IeWv7zBxpDJo=
-github.com/iden3/go-iden3-core/v2 v2.0.3 h1:ce9Jbw10zDsinWXFc05SiK2Hof/wu4zV4/ai5gQy29k=
-github.com/iden3/go-iden3-core/v2 v2.0.3/go.mod h1:L9PxhWPvoS9qTb3inEkZBm1RpjHBt+VTwvxssdzbAdw=
+github.com/iden3/go-iden3-auth/v2 v2.2.1 h1:juCzwU6z+T6LseF8JcjkytWE6DxOGmIbLxWaQXWx/0c=
+github.com/iden3/go-iden3-auth/v2 v2.2.1/go.mod h1:5+Nug6uN7yrru9Wc7CWAzo4HEshmM0+IeWv7zBxpDJo=
 github.com/iden3/go-iden3-core/v2 v2.0.4 h1:ggzC2zgOWgJAAcuG9X8bQG1r4gAoHZWqY7aLV8b1qgc=
 github.com/iden3/go-iden3-core/v2 v2.0.4/go.mod h1:L9PxhWPvoS9qTb3inEkZBm1RpjHBt+VTwvxssdzbAdw=
 github.com/iden3/go-iden3-crypto v0.0.15 h1:4MJYlrot1l31Fzlo2sF56u7EVFeHHJkxGXXZCtESgK4=
@@ -423,8 +417,6 @@ github.com/iden3/go-rapidsnark/witness/v2 v2.0.0 h1:mkY6VDfwKVJc83QGKmwVXY2LYepi
 github.com/iden3/go-rapidsnark/witness/v2 v2.0.0/go.mod h1:3JRjqUfW1hgI9hzLDO0v8z/DUkR0ZUehhYLlnIfRxnA=
 github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230524142950-0986cf057d4e h1:WeiFCrpj5pLRtSA4Mg03yTrSZhHHqN/k5b6bwxd9/tY=
 github.com/iden3/go-rapidsnark/witness/wazero v0.0.0-20230524142950-0986cf057d4e/go.mod h1:UEBifEzw62T6VzIHJeHuUgeLg2U/J9ttf7hOwQEqnYk=
-github.com/iden3/go-schema-processor/v2 v2.2.0 h1:sYPqLs72pEWXIfF0/MOv9AFm3+IGutRM3yClWRrjheg=
-github.com/iden3/go-schema-processor/v2 v2.2.0/go.mod h1:Ovsrk0839NZgHtoW4hVLAmHoOsHAQZuVNUXd7sIOkLQ=
 github.com/iden3/go-schema-processor/v2 v2.3.1 h1:cjsfUZNgyPoHQDEES4vuVod948QC9l35QkoEIat0ghc=
 github.com/iden3/go-schema-processor/v2 v2.3.1/go.mod h1:BcHVDZyn8q8vUlL+XpOo7hpwXmEjxzO8ao1LkvFsM+k=
 github.com/iden3/iden3comm/v2 v2.1.0 h1:op2X3y/H9khizcdoYKf3iRAQFt/l5dsip47sJu1kv7Q=

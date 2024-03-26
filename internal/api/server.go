@@ -406,6 +406,10 @@ func validateRequestQuery(offChainRequest bool, scope []ScopeRequest) error {
 		if scope.Query["allowedIssuers"] == nil {
 			return errors.New("allowedIssuers cannot be empty")
 		}
+
+		if scope.Query["credentialSubject"] == nil {
+			return errors.New("credentialSubject cannot be empty")
+		}
 	}
 
 	return nil
