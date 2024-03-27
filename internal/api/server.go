@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	common2 "github.com/ethereum/go-ethereum/common"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/iden3/go-circuits/v2"
@@ -18,6 +19,8 @@ import (
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	"github.com/iden3/go-iden3-auth/v2/pubsignals"
 	"github.com/iden3/go-iden3-auth/v2/state"
+	core "github.com/iden3/go-iden3-core/v2"
+	"github.com/iden3/go-iden3-core/v2/w3c"
 	"github.com/iden3/iden3comm/v2/protocol"
 	"github.com/patrickmn/go-cache"
 	log "github.com/sirupsen/logrus"
@@ -166,8 +169,8 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 		return SignIn400JSONResponse{N400JSONResponse{Message: "field scope is empty"}}, nil
 	}
 
-	switch request.Body.Scope[0].CircuitId {
-	case "credentialAtomicQuerySigV2", "credentialAtomicQueryMTPV2", "credentialAtomicQueryV3-beta.0":
+	switch circuits.CircuitID(request.Body.Scope[0].CircuitId) {
+	case circuits.AtomicQuerySigV2CircuitID, circuits.AtomicQueryMTPV2CircuitID, circuits.AtomicQueryV3CircuitID:
 		authReq, err := getAuthRequestOffChain(request, s.cfg, sessionID)
 		if err != nil {
 			log.Error(err)
@@ -183,7 +186,7 @@ func (s *Server) SignIn(_ context.Context, request SignInRequestObject) (SignInR
 			QrCode:    fmt.Sprintf("iden3comm://?request_uri=%s%s?id=%s", s.cfg.Host, "/qr-store", qrID.String()),
 			SessionID: sessionID,
 		}, nil
-	case "credentialAtomicQuerySigV2OnChain", "credentialAtomicQueryMTPV2OnChain", "credentialAtomicQueryV3OnChain-beta.0":
+	case circuits.AtomicQuerySigV2OnChainCircuitID, circuits.AtomicQueryMTPV2OnChainCircuitID, circuits.AtomicQueryV3OnChainCircuitID:
 		invokeReq, err := getContractInvokeRequestOnChain(request, s.cfg)
 		if err != nil {
 			log.Error(err)
@@ -375,15 +378,16 @@ func validateRequestQuery(offChainRequest bool, scope []ScopeRequest) error {
 			return errors.New("field circuitId is empty")
 		}
 
+		circuitID := circuits.CircuitID(scope.CircuitId)
 		if offChainRequest {
-			if scope.CircuitId != "credentialAtomicQuerySigV2" && scope.CircuitId != "credentialAtomicQueryMTPV2" && scope.CircuitId != "credentialAtomicQueryV3-beta.0" {
-				return fmt.Errorf("field circuitId value is wrong, got %s, expected credentialAtomicQuerySigV2 or credentialAtomicQueryMTPV2 or credentialAtomicQueryV3-beta.0", scope.CircuitId)
+			if circuitID != circuits.AtomicQuerySigV2CircuitID && circuitID != circuits.AtomicQueryMTPV2CircuitID && circuitID != circuits.AtomicQueryV3CircuitID {
+				return fmt.Errorf("field circuitId value is wrong, got %s, expected %s or %s or %s", scope.CircuitId, circuits.AtomicQuerySigV2CircuitID, circuits.AtomicQueryMTPV2CircuitID, circuits.AtomicQueryV3CircuitID)
 			}
 		}
 
 		if !offChainRequest {
-			if scope.CircuitId != "credentialAtomicQuerySigV2OnChain" && scope.CircuitId != "credentialAtomicQueryMTPV2OnChain" && scope.CircuitId != "credentialAtomicQueryV3OnChain-beta.0" {
-				return fmt.Errorf("field circuitId value is wrong, got %s, expected credentialAtomicQuerySigV2OnChain or credentialAtomicQueryMTPV2OnChain or credentialAtomicQueryV3OnChain-beta.0", scope.CircuitId)
+			if circuitID != circuits.AtomicQuerySigV2OnChainCircuitID && circuitID != circuits.AtomicQueryMTPV2OnChainCircuitID && circuitID != circuits.AtomicQueryV3OnChainCircuitID {
+				return fmt.Errorf("field circuitId value is wrong, got %s, expected %s or %s or %s", scope.CircuitId, circuits.AtomicQuerySigV2OnChainCircuitID, circuits.AtomicQueryMTPV2OnChainCircuitID, circuits.AtomicQueryV3OnChainCircuitID)
 			}
 		}
 
@@ -501,11 +505,41 @@ func getContractInvokeRequestOnChain(req SignInRequestObject, cfg config.Config)
 	authReq.ID = id
 	authReq.ThreadID = id
 	authReq.To = ""
+
+	verifierDID, err := buildOnchainVerifierDID(transactionData)
+	if err != nil {
+		return protocol.ContractInvokeRequestMessage{}, err
+	}
+
+	authReq.From = verifierDID.String()
 	if req.Body.To != nil {
 		authReq.To = *req.Body.To
 	}
 
 	return authReq, nil
+}
+
+func buildOnchainVerifierDID(transactionData protocol.TransactionData) (*w3c.DID, error) {
+	address := common2.HexToAddress(transactionData.ContractAddress)
+	var ethAddr [20]byte
+	copy(ethAddr[:], address.Bytes())
+
+	currentState := core.GenesisFromEthAddress(ethAddr)
+
+	blockchain, network, err := core.NetworkByChainID(core.ChainID(transactionData.ChainID))
+	if err != nil {
+		return nil, err
+	}
+	didType, err := core.BuildDIDType(core.DIDMethodPolygonID, blockchain, network)
+	if err != nil {
+		return nil, err
+	}
+
+	did, err := core.NewDID(didType, currentState)
+	if err != nil {
+		return nil, err
+	}
+	return did, nil
 }
 
 func getParams(params ScopeParams) (map[string]interface{}, error) {
@@ -545,14 +579,14 @@ func getVerificationResponseScopes(scopes []protocol.ZeroKnowledgeProofResponse)
 		return nil, errors.New("scopes are empty")
 	}
 
-	if scopes[0].CircuitID != "credentialAtomicQueryV3-beta.0" {
+	if scopes[0].CircuitID != string(circuits.AtomicQueryV3CircuitID) {
 		return []models.VerificationResponseScope{}, nil
 	}
 
 	resp := make([]models.VerificationResponseScope, 0, len(scopes))
 	for _, scope := range scopes {
 		ps := circuits.AtomicQueryV3PubSignals{}
-		if scope.CircuitID != "credentialAtomicQueryV3-beta.0" {
+		if scope.CircuitID != string(circuits.AtomicQueryV3CircuitID) {
 			return []models.VerificationResponseScope{}, nil
 		}
 

@@ -1,0 +1,81 @@
+name: Deploy verifier backend to Development AWS Environment new account
+
+on:
+  workflow_run:
+    workflows: ["Checks"]
+    branches:  ["develop"]
+    types:
+      - completed
+
+env:
+  AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID_NEW }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  ENVIRONMENT: dev
+  ECR_REPOSITORY: verifier_backend
+  POLYGON_MUMBAI_CONTRACT_ADDRESS: "0x134B1BE34911E39A8397ec6289782989729807a4"
+  POLYGON_MAIN_CONTRACT_ADDRESS: "0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D"
+
+jobs:
+  build-backend:
+    name: Build and push latest image to AWS
+    permissions:
+      id-token: write
+      contents: write
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.20"
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+
+      - name: Build file with supported networks
+        run: |
+          echo -e "polygon:" > resolvers_settings.yaml
+          echo -e "  mumbai:" >> resolvers_settings.yaml
+          echo -e "    contractAddress: ${{ env.POLYGON_MUMBAI_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
+          echo -e "    networkURL: ${{ secrets.POLYGON_NODE_URL }}" >> resolvers_settings.yaml
+          echo -e "  main:" >> resolvers_settings.yaml
+          echo -e "    contractAddress: ${{ env.POLYGON_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
+          echo -e "    networkURL: ${{ secrets.POLYGON_MAINET_NODE_URL }}" >> resolvers_settings.yaml
+          cat resolvers_settings.yaml
+      - run: make build/docker
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/PolygonIDActionsRole
+          role-session-name: GitHubActionsSession
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        id: login-ecr
+
+      - name: Get version
+        run: echo "::set-output name=VERSION::$(git rev-parse --short HEAD)"
+        id: version
+
+      - name: Tag and push image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ steps.version.outputs.VERSION }}
+        run: |
+          docker tag polygonid/verifier-backend:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+
+          docker tag polygonid/verifier-backend:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
