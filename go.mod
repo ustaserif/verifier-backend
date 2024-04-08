@@ -2,8 +2,6 @@ module github.com/0xPolygonID/verifier-backend
 
 go 1.21
 
-toolchain go1.22.0
-
 require (
 	github.com/deepmap/oapi-codegen v1.16.2
 	github.com/ethereum/go-ethereum v1.13.14
