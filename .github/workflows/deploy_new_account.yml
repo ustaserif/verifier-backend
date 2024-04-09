@@ -1,16 +1,14 @@
-name: Deploy verifier backend to Development AWS Environment new account
+name: Deploy verifier backend to AWS Environment new account
 
 on:
   workflow_run:
     workflows: ["Checks"]
-    branches:  ["develop"]
+    branches:  ["develop", "main"]
     types:
       - completed
 
 env:
-  AWS_ACCOUNT_ID: ${{ secrets.DEV_AWS_ACCOUNT_ID_NEW }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-  ENVIRONMENT: dev
   ECR_REPOSITORY: verifier_backend
   POLYGON_MUMBAI_CONTRACT_ADDRESS: "0x134B1BE34911E39A8397ec6289782989729807a4"
   POLYGON_AMOY_CONTRACT_ADDRESS: "0x8c99F13dc5083b1E4c16f269735EaD4cFbc4970d"
@@ -18,13 +16,15 @@ env:
 
 jobs:
   build-backend:
+    environment:
+      name: ${{ github.ref_name }}
+
     name: Build and push latest image to AWS
     permissions:
       id-token: write
       contents: write
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    environment: dev
 
     steps:
       - name: Checkout code
@@ -59,6 +59,8 @@ jobs:
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID_NEW }}
         with:
           aws-region: ${{ env.AWS_DEFAULT_REGION }}
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/PolygonIDActionsRole
