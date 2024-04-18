@@ -8,7 +8,7 @@ on:
       - completed
 
 env:
-  AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
   ECR_REPOSITORY: verifier_backend
 
   POLYGON_AMOY_CONTRACT_ADDRESS: "0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124"
