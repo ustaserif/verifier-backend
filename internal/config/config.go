@@ -38,6 +38,7 @@ type ResolverSettingsAttrs struct {
 	ChainID         string `yaml:"chainID"`
 	NetworkFlag     byte   `yaml:"networkFlag"`
 	DID             string `yaml:"did"`
+	Method          string `yaml:"method"`
 }
 
 // Load loads the configuration from the environment
