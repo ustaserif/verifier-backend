@@ -30,7 +30,7 @@ env:
 jobs:
   build-backend:
     environment:
-      name: ${{ github.ref_name }}
+      name: ${{ github.event.workflow_run.head_branch }}
 
     name: Build and push latest image to AWS
     permissions:
@@ -54,6 +54,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Print Environment
+        run: echo ${{ github.event.workflow_run.head_branch }}
 
       - name: Build file with supported networks
         run: |

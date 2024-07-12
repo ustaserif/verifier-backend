@@ -5,12 +5,14 @@ polygon:
     chainID: 80002
     networkFlag: 0b0001_0011
     did: did:polygonid:polygon:amoy:2qV9QXdhXXmN5sKjN1YueMjxgRbnJcEGK2kGpvk3cq
+    method: polygonid
   main:
     contractAddress: 0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D
     networkURL: https://polygon-mainnet.g.alchemy.com/v2/XXXXX
     chainID: 137
     networkFlag: 0b0001_0001
     did: did:polygonid:polygon:main:2q4Q7F7tM1xpwUTgWivb6TgKX3vWirsE3mqymuYjVv
+    method: polygonid
 #customBlockchain:
 #  customNetwork:
 #    contractAddress: { replace with state contract }
@@ -18,3 +20,4 @@ polygon:
 #    chainID: { replace with chain ID }
 #    networkFlag: { replace with network flag, e.g 0b0011_0001 }
 #    did: { replace with verifier's did }
+#    method: iden3
