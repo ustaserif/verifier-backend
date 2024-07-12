@@ -143,3 +143,5 @@ VERIFIER_BACKEND_CACHE_EXPIRATION=30m
   }
 }
 ```
+
+Privado network will be supported soon.

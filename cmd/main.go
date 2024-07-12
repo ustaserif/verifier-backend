@@ -110,7 +110,7 @@ func registerCustomDIDMethod(ctx context.Context, blockchain string, network str
 		return fmt.Errorf("cannot convert chainID to int: %w", err)
 	}
 	params := core.DIDMethodNetworkParams{
-		Method:      core.DIDMethodPolygonID,
+		Method:      core.DIDMethod(resolverAttrs.Method),
 		Blockchain:  core.Blockchain(blockchain),
 		Network:     core.NetworkID(network),
 		NetworkFlag: resolverAttrs.NetworkFlag,
