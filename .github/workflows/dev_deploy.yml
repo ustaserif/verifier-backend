@@ -29,6 +29,16 @@ env:
   CAMINO_COLUMBUS_NETWORK_FLAG: "0b10000011"
   CAMINO_COLUMBUS_CHAIN_ID: "501"
 
+  PRIVADO_MAIN_CONTRACT_ADDRESS: "0x975556428F077dB5877Ea2474D783D6C69233742"
+  PRIVADO_MAIN_SENDER_DID: "did:iden3:privado:main:2SZz8Kvfb6CXGTiiqNiz8CTFTnySV7PKN7iVUvsNMH"
+  PRIVADO_MAIN_NETWORK_FLAG: "0b1010_0001"
+  PRIVADO_MAIN_CHAIN_ID: "21000"
+
+  PRIVADO_TEST_CONTRACT_ADDRESS: "0x975556428F077dB5877Ea2474D783D6C69233742"
+  PRIVADO_TEST_SENDER_DID: "did:iden3:privado:test:2Sn9bnRFiTYNfbS1dVTaGCUXuMfnQMUcTCAXtFv4Gr"
+  PRIVADO_TEST_NETWORK_FLAG: "0b1010_0010"
+  PRIVADO_TEST_CHAIN_ID: "21001"
+
 jobs:
   build-backend:
     name: Build and push latest image to AWS
@@ -77,6 +87,19 @@ jobs:
           echo -e "    chainID: ${{ env.CAMINO_COLUMBUS_CHAIN_ID }}" >> resolvers_settings.yaml
           echo -e "    networkFlag: ${{ env.CAMINO_COLUMBUS_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.CAMINO_COLUMBUS_SENDER_DID }}" >> resolvers_settings.yaml
+          echo -e "privado:" >> resolvers_settings.yaml
+          echo -e "  test:" >> resolvers_settings.yaml
+          echo -e "    contractAddress: ${{ env.PRIVADO_TEST_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
+          echo -e "    networkURL: ${{ secrets.PRIVADO_TEST_NODE_URL }}" >> resolvers_settings.yaml
+          echo -e "    chainID: ${{ env.PRIVADO_TEST_CHAIN_ID }}" >> resolvers_settings.yaml
+          echo -e "    networkFlag: ${{ env.PRIVADO_TEST_NETWORK_FLAG }}" >> resolvers_settings.yaml
+          echo -e "    did: ${{ env.PRIVADO_TEST_SENDER_DID }}" >> resolvers_settings.yaml
+          echo -e "  main:" >> resolvers_settings.yaml
+          echo -e "    contractAddress: ${{ env.PRIVADO_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
+          echo -e "    networkURL: ${{ secrets.PRIVADO_MAINET_NODE_URL }}" >> resolvers_settings.yaml
+          echo -e "    chainID: ${{ env.PRIVADO_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
+          echo -e "    networkFlag: ${{ env.PRIVADO_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
+          echo -e "    did: ${{ env.PRIVADO_MAIN_SENDER_DID }}" >> resolvers_settings.yaml          
           cat resolvers_settings.yaml
       - run: make build/docker
 
