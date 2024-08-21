@@ -36,6 +36,13 @@ env:
   CAMINO_COLUMBUS_SENDER_DID: "did:polygonid:camino:columbus:3E1DZ5qrNCJctmUS3nphEkfsvqYs1kL5oGTtEpYiov"
   CAMINO_COLUMBUS_NETWORK_FLAG: "0b10000011"
   CAMINO_COLUMBUS_CHAIN_ID: "501"
+  
+  LINEA_SEPOLIA_CONTRACT_ADDRESS: "0xD8869a439a07Edcc990F8f21E638702ee9273293"
+  LINEA_SEPOLIA_SENDER_DID: "did:iden3:linea:sepolia:28itzVLBHnMJV8sdjyffcAtWCx8HZ7btdKXxs7fJ6v"
+  LINEA_SEPOLIA_NETWORK_FLAG: "0b0100_1000"
+  LINEA_SEPOLIA_NODE_URL: "https://rpc.sepolia.linea.build"
+  LINEA_SEPOLIA_CHAIN_ID: "59141"
+  LINEA_SEPOLIA_METHOD: "iden3"
 
 jobs:
   build-backend:
@@ -89,6 +96,14 @@ jobs:
           echo -e "    chainID: ${{ env.CAMINO_COLUMBUS_CHAIN_ID }}" >> resolvers_settings.yaml
           echo -e "    networkFlag: ${{ env.CAMINO_COLUMBUS_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.CAMINO_COLUMBUS_SENDER_DID }}" >> resolvers_settings.yaml
+          echo -e "linea:" >> resolvers_settings.yaml
+          echo -e "  sepolia:" >> resolvers_settings.yaml
+          echo -e "    contractAddress: ${{ env.LINEA_SEPOLIA_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
+          echo -e "    networkURL: ${{ env.LINEA_SEPOLIA_NODE_URL }}" >> resolvers_settings.yaml
+          echo -e "    chainID: ${{ env.LINEA_SEPOLIA_CHAIN_ID }}" >> resolvers_settings.yaml
+          echo -e "    networkFlag: ${{ env.LINEA_SEPOLIA_NETWORK_FLAG }}" >> resolvers_settings.yaml
+          echo -e "    did: ${{ env.LINEA_SEPOLIA_SENDER_DID }}" >> resolvers_settings.yaml
+          echo -e "    method: ${{ env.LINEA_SEPOLIA_METHOD }}" >> resolvers_settings.yaml
           echo -e "privado:" >> resolvers_settings.yaml
           echo -e "  test:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.PRIVADO_TEST_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
