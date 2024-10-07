@@ -18,13 +18,13 @@ import (
 )
 
 const (
-	mumbaiSenderDID = "did:polygonid:polygon:mumbai:2qCU58EJgrELdThzMyykDwT5kWff6XSbpSWtTQ7oS8"
-	mumbaiNetwork   = "80001"
+	amoySenderDID = "did:iden3:polygon:amoy:x6x5sor7zpxixYDNyDZKnh3oJZRj7Vzn9jzoCNoxc"
+	amoyNetwork   = "80002"
 )
 
 func TestSignIn(t *testing.T) {
 	ctx := context.Background()
-	server := New(cfg, nil, map[string]string{"80001": mumbaiSenderDID})
+	server := New(cfg, nil, map[string]string{"80002": amoySenderDID})
 
 	type expected struct {
 		httpCode     int
@@ -43,7 +43,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQuerySigV2 circuit with KYCAgeCredential",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							CircuitId: string(circuits.AtomicQuerySigV2CircuitID),
@@ -83,7 +83,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  string(packers.MediaTypePlainMessage),
 					Type: string(protocol.AuthorizationRequestMessageType),
@@ -94,7 +94,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQuerySigV2 circuit with KYCAgeCredential and to field",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -135,7 +135,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   common.ToPointer("did:polygonid:polygon:mumbai:2qEATqfECVbCBzq9EhJpPSiv1xtJRpbMBKDaNM68Ci"),
 					Typ:  string(packers.MediaTypePlainMessage),
 					Type: string(protocol.AuthorizationRequestMessageType),
@@ -146,7 +146,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryMTPV2 circuit with KYCAgeCredential",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -186,7 +186,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  string(packers.MediaTypePlainMessage),
 					Type: string(protocol.AuthorizationRequestMessageType),
@@ -197,7 +197,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryV3-beta.1 circuit with KYCAgeCredential",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -239,7 +239,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  string(packers.MediaTypePlainMessage),
 					Type: string(protocol.AuthorizationRequestMessageType),
@@ -250,7 +250,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryV3-beta.1 circuit with KYCAgeCredential and nullifierSessionId",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -298,7 +298,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  string(packers.MediaTypePlainMessage),
 					Type: string(protocol.AuthorizationRequestMessageType),
@@ -309,7 +309,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request duplicated query id",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -353,7 +353,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryV3-beta.1 and TestInteger01 circuits",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -425,7 +425,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/authorization/1.0/request",
@@ -436,7 +436,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid request for credentialAtomicQueryV3OnChain-beta.1 circuit",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        3,
@@ -457,8 +457,8 @@ func TestSignIn(t *testing.T) {
 					TransactionData: &TransactionData{
 						ContractAddress: "0x36eB0E70a456c310D8d8d15ae01F6D5A7C15309A",
 						MethodID:        "b68967e2",
-						ChainID:         80001,
-						Network:         mumbaiNetwork,
+						ChainID:         80002,
+						Network:         amoyNetwork,
 					},
 				},
 			},
@@ -484,11 +484,11 @@ func TestSignIn(t *testing.T) {
 						TransactionData: &TransactionDataResponse{
 							ContractAddress: "0x36eB0E70a456c310D8d8d15ae01F6D5A7C15309A",
 							MethodId:        "b68967e2",
-							ChainId:         80001,
-							Network:         mumbaiNetwork,
+							ChainId:         80002,
+							Network:         amoyNetwork,
 						},
 					},
-					From: "did:polygonid:polygon:mumbai:2qCU58EJgrELdThzMyykDwT5kWff6XSbpSWtTQ7oS8",
+					From: "did:iden3:polygon:amoy:x6x5sor7zpxixYDNyDZKnh3oJZRj7Vzn9jzoCNoxc",
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
@@ -499,7 +499,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request for credentialAtomicQueryV3-beta.1 and KYCAgeCredential circuits",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -543,7 +543,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request for credentialAtomicQueryV3-beta.1 and credentialAtomicQuerySigV2OnChain circuits",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -587,7 +587,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid params",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -648,7 +648,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid circuitID",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							CircuitId: "credentialAtomicQueryV3-beta.1111",
@@ -676,7 +676,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no context",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -704,7 +704,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - context empty",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -733,7 +733,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -761,7 +761,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid transaction data",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -794,7 +794,7 @@ func TestSignIn(t *testing.T) {
 						ChainID:         1234,
 						ContractAddress: "",
 					},
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -824,12 +824,12 @@ func TestSignIn(t *testing.T) {
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
 					TransactionData: &TransactionData{
-						ChainID:         80001,
+						ChainID:         80002,
 						ContractAddress: "0x3a4d4E47bFfF6bD0EF3cd46580D9e36F3367da03",
 						MethodID:        "123",
-						Network:         mumbaiNetwork,
+						Network:         amoyNetwork,
 					},
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -871,7 +871,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: "did:polygonid:polygon:mumbai:2qCU58EJgrELeNyUdGokyCKT8tUygKreYkuLFMbnxq",
+					From: "did:iden3:polygon:amoy:x6x5sor7zpxjsoheG3a53ZRBgNkJuv3WU8Sb9roVK",
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/proofs/1.0/contract-invoke-request",
@@ -882,7 +882,7 @@ func TestSignIn(t *testing.T) {
 			name: "valid proof of credential ownership",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -926,7 +926,7 @@ func TestSignIn(t *testing.T) {
 							},
 						},
 					},
-					From: mumbaiSenderDID,
+					From: amoySenderDID,
 					To:   nil,
 					Typ:  "application/iden3comm-plain-json",
 					Type: "https://iden3-communication.io/authorization/1.0/request",
@@ -937,7 +937,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query onchain - empty type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -966,7 +966,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - empty type",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -995,7 +995,7 @@ func TestSignIn(t *testing.T) {
 			name: "invalid request - invalid query - no allowedIssuers",
 			body: SignInRequestObject{
 				Body: &SignInJSONRequestBody{
-					ChainID: common.ToPointer("80001"),
+					ChainID: common.ToPointer("80002"),
 					Scope: []ScopeRequest{
 						{
 							Id:        1,
@@ -1052,6 +1052,7 @@ func TestSignIn(t *testing.T) {
 						assert.Equal(t, expected.Body.Scope[0].Params, got.Body.Scope[0].Params)
 					}
 				}
+				println(expected.From, got.From)
 				assert.Equal(t, expected.From, got.From)
 				assert.Equal(t, expected.Typ, got.Typ)
 				assert.Equal(t, expected.Type, got.Type)

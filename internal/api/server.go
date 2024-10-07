@@ -537,7 +537,7 @@ func buildOnchainVerifierDID(transactionData protocol.TransactionData) (*w3c.DID
 	if err != nil {
 		return nil, err
 	}
-	didType, err := core.BuildDIDType(core.DIDMethodPolygonID, blockchain, network)
+	didType, err := core.BuildDIDType(core.DIDMethodIden3, blockchain, network)
 	if err != nil {
 		return nil, err
 	}
