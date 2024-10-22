@@ -9,12 +9,12 @@ require (
 	github.com/go-chi/cors v1.2.1
 	github.com/golangci/golangci-lint v1.55.1
 	github.com/google/uuid v1.6.0
-	github.com/iden3/go-circuits/v2 v2.3.0
-	github.com/iden3/go-iden3-auth/v2 v2.4.1
-	github.com/iden3/go-iden3-core/v2 v2.2.0
-	github.com/iden3/go-jwz/v2 v2.1.1
-	github.com/iden3/go-schema-processor/v2 v2.4.0
-	github.com/iden3/iden3comm/v2 v2.5.1
+	github.com/iden3/go-circuits/v2 v2.4.0
+	github.com/iden3/go-iden3-auth/v2 v2.5.0
+	github.com/iden3/go-iden3-core/v2 v2.3.1
+	github.com/iden3/go-jwz/v2 v2.2.0
+	github.com/iden3/go-schema-processor/v2 v2.5.0
+	github.com/iden3/iden3comm/v2 v2.6.0
 	github.com/ipfs/go-ipfs-api v0.7.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -124,7 +124,7 @@ require (
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/iden3/contracts-abi/state/go/abi v1.0.1 // indirect
-	github.com/iden3/go-iden3-crypto v0.0.16 // indirect
+	github.com/iden3/go-iden3-crypto v0.0.17 // indirect
 	github.com/iden3/go-merkletree-sql/v2 v2.0.6 // indirect
 	github.com/iden3/go-rapidsnark/prover v0.0.10 // indirect
 	github.com/iden3/go-rapidsnark/types v0.0.3 // indirect

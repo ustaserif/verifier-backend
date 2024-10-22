@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"syscall"
 
 	"github.com/go-chi/chi/v5"
@@ -16,7 +15,6 @@ import (
 	"github.com/iden3/go-iden3-auth/v2/loaders"
 	"github.com/iden3/go-iden3-auth/v2/pubsignals"
 	"github.com/iden3/go-iden3-auth/v2/state"
-	core "github.com/iden3/go-iden3-core/v2"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/0xPolygonID/verifier-backend/internal/api"
@@ -92,10 +90,10 @@ func parseResolverSettings(ctx context.Context, rs config.ResolverSettings) (map
 			resolver := state.NewETHResolver(networkSettings.NetworkURL, networkSettings.ContractAddress)
 			resolvers[prefix] = resolver
 
-			if err := registerCustomDIDMethod(ctx, chainName, networkName, networkSettings); err != nil {
-				log.Error(ctx, "cannot register custom DID method", "err", err)
-				return nil, nil, err
-			}
+			//if err := registerCustomDIDMethod(ctx, chainName, networkName, networkSettings); err != nil {
+			//	log.Error(ctx, "cannot register custom DID method", "err", err)
+			//	return nil, nil, err
+			//}
 
 			verifiersDIDs[networkSettings.ChainID] = networkSettings.DID
 		}
@@ -104,20 +102,20 @@ func parseResolverSettings(ctx context.Context, rs config.ResolverSettings) (map
 	return resolvers, verifiersDIDs, nil
 }
 
-func registerCustomDIDMethod(ctx context.Context, blockchain string, network string, resolverAttrs config.ResolverSettingsAttrs) error {
-	chainID, err := strconv.Atoi(resolverAttrs.ChainID)
-	if err != nil {
-		return fmt.Errorf("cannot convert chainID to int: %w", err)
-	}
-	params := core.DIDMethodNetworkParams{
-		Method:      core.DIDMethod(resolverAttrs.Method),
-		Blockchain:  core.Blockchain(blockchain),
-		Network:     core.NetworkID(network),
-		NetworkFlag: resolverAttrs.NetworkFlag,
-	}
-	if err := core.RegisterDIDMethodNetwork(params, core.WithChainID(chainID)); err != nil {
-		log.Error(ctx, "cannot register custom DID method", "err", err, "customDID", chainID)
-		return err
-	}
-	return nil
-}
+//func registerCustomDIDMethod(ctx context.Context, blockchain string, network string, resolverAttrs config.ResolverSettingsAttrs) error {
+//	chainID, err := strconv.Atoi(resolverAttrs.ChainID)
+//	if err != nil {
+//		return fmt.Errorf("cannot convert chainID to int: %w", err)
+//	}
+//	params := core.DIDMethodNetworkParams{
+//		Method:      core.DIDMethod(resolverAttrs.Method),
+//		Blockchain:  core.Blockchain(blockchain),
+//		Network:     core.NetworkID(network),
+//		NetworkFlag: resolverAttrs.NetworkFlag,
+//	}
+//	if err := core.RegisterDIDMethodNetwork(params, core.WithChainID(chainID)); err != nil {
+//		log.Error(ctx, "cannot register custom DID method", "err", err, "customDID", chainID)
+//		return err
+//	}
+//	return nil
+//}
