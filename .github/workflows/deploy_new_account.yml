@@ -99,46 +99,33 @@ jobs:
           echo -e "    contractAddress: ${{ env.POLYGON_AMOY_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_AMOY_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.POLYGON_AMOY_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.POLYGON_AMOY_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.POLYGON_AMOY_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "  main:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.POLYGON_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_MAINET_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.POLYGON_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.POLYGON_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.POLYGON_MAIN_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "  zkevm:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.POLYGON_ZKEVM_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_ZKEVM_MAIN_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.POLYGON_ZKEVM_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.POLYGON_ZKEVM_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.POLYGON_ZKEVM_MAIN_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "  cardona:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.POLYGON_ZKEVM_CARDONA_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.POLYGON_ZKEVM_CARDONA_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.POLYGON_ZKEVM_CARDONA_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.POLYGON_ZKEVM_CARDONA_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.POLYGON_ZKEVM_CARDONA_SENDER_DID }}" >> resolvers_settings.yaml
-          echo -e "camino:" >> resolvers_settings.yaml
-          echo -e "  columbus:" >> resolvers_settings.yaml
-          echo -e "    contractAddress: ${{ env.CAMINO_COLUMBUS_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
-          echo -e "    networkURL: ${{ env.CAMINO_COLUMBUS_NODE_URL }}" >> resolvers_settings.yaml
-          echo -e "    chainID: ${{ env.CAMINO_COLUMBUS_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.CAMINO_COLUMBUS_NETWORK_FLAG }}" >> resolvers_settings.yaml
-          echo -e "    did: ${{ env.CAMINO_COLUMBUS_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "linea:" >> resolvers_settings.yaml
           echo -e "  sepolia:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.LINEA_SEPOLIA_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.LINEA_SEPOLIA_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.LINEA_SEPOLIA_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.LINEA_SEPOLIA_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.LINEA_SEPOLIA_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "    method: ${{ env.LINEA_SEPOLIA_METHOD }}" >> resolvers_settings.yaml
           echo -e "  main:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.LINEA_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.LINEA_MAIN_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.LINEA_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.LINEA_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.LINEA_MAIN_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "    method: ${{ env.LINEA_MAIN_METHOD }}" >> resolvers_settings.yaml
           echo -e "privado:" >> resolvers_settings.yaml
@@ -146,26 +133,22 @@ jobs:
           echo -e "    contractAddress: ${{ env.PRIVADO_TEST_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.PRIVADO_TEST_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.PRIVADO_TEST_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.PRIVADO_TEST_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.PRIVADO_TEST_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "  main:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.PRIVADO_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.PRIVADO_MAINET_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.PRIVADO_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.PRIVADO_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.PRIVADO_MAIN_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "ethereum:" >> resolvers_settings.yaml
           echo -e "  sepolia:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.ETHEREUM_SEPOLIA_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.ETHEREUM_SEPOLIA_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.ETHEREUM_SEPOLIA_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.ETHEREUM_SEPOLIA_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.ETHEREUM_SEPOLIA_SENDER_DID }}" >> resolvers_settings.yaml
           echo -e "  main:" >> resolvers_settings.yaml
           echo -e "    contractAddress: ${{ env.ETHEREUM_MAIN_CONTRACT_ADDRESS }}" >> resolvers_settings.yaml
           echo -e "    networkURL: ${{ secrets.ETHEREUM_MAIN_NODE_URL }}" >> resolvers_settings.yaml
           echo -e "    chainID: ${{ env.ETHEREUM_MAIN_CHAIN_ID }}" >> resolvers_settings.yaml
-          echo -e "    networkFlag: ${{ env.ETHEREUM_MAIN_NETWORK_FLAG }}" >> resolvers_settings.yaml
           echo -e "    did: ${{ env.ETHEREUM_MAIN_SENDER_DID }}" >> resolvers_settings.yaml
           cat resolvers_settings.yaml
       - run: make build/docker
