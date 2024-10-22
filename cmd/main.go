@@ -92,10 +92,10 @@ func parseResolverSettings(ctx context.Context, rs config.ResolverSettings) (map
 			resolver := state.NewETHResolver(networkSettings.NetworkURL, networkSettings.ContractAddress)
 			resolvers[prefix] = resolver
 
-			if err := registerCustomDIDMethod(ctx, chainName, networkName, networkSettings); err != nil {
-				log.Error(ctx, "cannot register custom DID method", "err", err)
-				return nil, nil, err
-			}
+			//if err := registerCustomDIDMethod(ctx, chainName, networkName, networkSettings); err != nil {
+			//	log.Error(ctx, "cannot register custom DID method", "err", err)
+			//	return nil, nil, err
+			//}
 
 			verifiersDIDs[networkSettings.ChainID] = networkSettings.DID
 		}
