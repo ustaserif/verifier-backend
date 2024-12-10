@@ -1,0 +1,16 @@
+polygon:
+  amoy:
+    contractAddress: 0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124
+    networkURL: https://polygon-amoy.drpc.org
+    chainID: 80002
+    networkFlag: 0b0001_0011
+    did: did:polygonid:polygon:amoy:2qV9QXdhXXmN5sKjN1YueMjxgRbnJcEGK2kGpvk3cq
+    method: polygonid
+#customBlockchain:
+#  customNetwork:
+#    contractAddress: { replace with state contract }
+#    networkURL: { replace with custom RPC }
+#    chainID: { replace with chain ID }
+#    networkFlag: { replace with network flag, e.g 0b0011_0001 }
+#    did: { replace with verifier's did }
+#    method: iden3
